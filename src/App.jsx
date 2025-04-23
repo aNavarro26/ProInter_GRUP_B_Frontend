@@ -1,29 +1,41 @@
-import { useEffect, useState } from 'react';
+// src/App.jsx
+import { useState, useEffect } from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Home from './pages/Home'
+import CategoryPage from './pages/CategoryPage'
+import ProductDetail from './pages/ProductDetail'
+import About from './pages/About'
+import { getProducts } from './services/productService'
+import { ProductsContext } from './contexts/ProductsContext'
+import './index.css'
 
-function App() {
-  const [orders, setOrders] = useState([]);
+export default function App() {
+  const [products, setProducts] = useState(null)
 
   useEffect(() => {
-    const API_URL = import.meta.env.VITE_API_URL;
+    getProducts()
+      .then(data => setProducts(data))
+      .catch(err => {
+        console.error(err)
+        setProducts([])
+      })
+  }, [])
 
-    fetch(`${API_URL}/orders/`)
-      .then((res) => res.json())
-      .then((data) => setOrders(data))
-      .catch((err) => console.error('Error al pedir datos:', err));
-  }, []);
+  // while we don't have the full array, we load a spinner
+  if (products === null) {
+    return <div className="app-spinner spinner" />
+  }
 
   return (
-    <div style={{ padding: '2rem' }}>
-      <h1>Listado de Pedidos</h1>
-      <ul>
-        {orders.map((order) => (
-          <li key={order.order_id}>
-            Pedido #{order.order_id} - Cliente #{order.customer} - Estado: {order.status}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+    <ProductsContext.Provider value={products}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/category/:name" element={<CategoryPage />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/about" element={<About />} />
+        </Routes>
+      </BrowserRouter>
+    </ProductsContext.Provider>
+  )
 }
-
-export default App;
