@@ -7,7 +7,7 @@ import '../index.css'
 
 export default function Home() {
     const [ready, setReady] = useState(false)
-
+    
     // Sólo para asegurarnos de que ambos hijos han montado
     useEffect(() => {
         // delay so we show banner and wheel at the same time
