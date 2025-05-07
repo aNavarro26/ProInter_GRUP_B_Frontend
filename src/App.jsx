@@ -1,5 +1,5 @@
 // src/App.jsx
-import { useState, useEffect, use } from 'react'
+import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import CategoryPage from './pages/CategoryPage'
@@ -7,6 +7,7 @@ import ProductDetail from './pages/ProductDetail'
 import About from './pages/About'
 import Cart from './components/Cart'
 import Login from "./pages/Login";
+import CartPage from "./pages/CartPage"
 import { getProducts } from './services/productService'
 import { ProductsContext } from './contexts/ProductsContext'
 import './index.css'
@@ -40,6 +41,7 @@ export default function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/cart" element={<CartPage />} />
         </Routes>
       </BrowserRouter>
     </ProductsContext.Provider>

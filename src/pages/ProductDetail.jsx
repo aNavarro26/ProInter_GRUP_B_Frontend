@@ -4,6 +4,7 @@ import { getProductById } from '../services/productService'
 import { addToCart } from '../services/cartService'
 import Navbar from '../components/Navbar'
 import '../index.css'
+import { getUserIdFromCookie } from '../helpers/utils'
 
 export default function ProductDetail() {
     const { id } = useParams()
@@ -33,14 +34,19 @@ export default function ProductDetail() {
     const prev = () => setCurrent(i => (i === 0 ? images.length - 1 : i - 1))
     const next = () => setCurrent(i => (i === images.length - 1 ? 0 : i + 1))
 
-         const handleAddToCart = async () => {
+    const handleAddToCart = async () => {
         try {
-            const userId = 1; // Replace with actual user ID (from auth context or state)
-            const result = await addToCart(userId, product); // Call the addToCart function
-            setMessage('Product added to cart!'); // Show success message
+            const userId = getUserIdFromCookie();
+            if (!userId) {
+                setMessage('You must be logged in to add items to cart');
+                return;
+            }
+            console.log("product before sending:", product)
+            const result = await addToCart(product);
+            setMessage('Product added to cart!');
             console.log('Added to cart:', result);
         } catch (error) {
-            setMessage('Failed to add to cart'); // Show error message
+            setMessage('Failed to add to cart');
             console.error('Error adding to cart:', error.message);
         }
     };
@@ -84,13 +90,12 @@ export default function ProductDetail() {
                         ))}
                     </div>
                     <button className="add-to-cart-button" onClick={handleAddToCart}>
-    Add to cart
-</button>
-{message && <p className="message">{message}</p>}
-
+                        Add to cart
+                    </button>
+                    {message && <p className="message">{message}</p>}
                     <div className="full-desc">{fullDesc}</div>
-                </div>
-            </div>
+                </div >
+            </div >
         </>
     )
 

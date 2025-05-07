@@ -1,3 +1,5 @@
+import { getUserIdFromCookie } from "../helpers/utils";
+
 const API_URL = import.meta.env.VITE_API_URL;
 export async function getCartItems(userId) {
     const response = await fetch(`${API_URL}/cart/${userId}/items/`);
@@ -8,26 +10,30 @@ export async function getCartItems(userId) {
     return await response.json();
 }
 
-export async function addToCart(userId, product) {
-    const response = await fetch(`${API_URL}/cart/${userId}/items/`, {
+export async function addToCart(product) {
+    const userId = getUserIdFromCookie();
+    console.log('product object:', product);
+
+    const response = await fetch(`${API_URL}/cart/my/items/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-      body: JSON.stringify({
-            product: product.id,
+        body: JSON.stringify({
+            user_id: userId,
+            product: product.product_id,
             quantity: 1,
-            price: product.price,
-            subtotal: product.price * 1
         }),
     });
 
     if (!response.ok) {
-        throw new Error('Failed to add item to cart');
+        const errorText = await response.text();
+        throw new Error('Failed to add item to cart: ' + errorText);
     }
 
     return await response.json();
 }
+
 
 
 export async function removeFromCart(userId, productId) {
