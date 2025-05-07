@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { getProductById } from '../services/productService'
+import { addToCart } from '../services/cartService'
 import Navbar from '../components/Navbar'
 import '../index.css'
 
@@ -9,6 +10,7 @@ export default function ProductDetail() {
     const [product, setProduct] = useState(null)
     const [loading, setLoading] = useState(true)
     const [current, setCurrent] = useState(0)
+    const [message, setMessage] = useState('')
 
     useEffect(() => {
         getProductById(id)
@@ -30,6 +32,18 @@ export default function ProductDetail() {
 
     const prev = () => setCurrent(i => (i === 0 ? images.length - 1 : i - 1))
     const next = () => setCurrent(i => (i === images.length - 1 ? 0 : i + 1))
+
+         const handleAddToCart = async () => {
+        try {
+            const userId = 1; // Replace with actual user ID (from auth context or state)
+            const result = await addToCart(userId, product); // Call the addToCart function
+            setMessage('Product added to cart!'); // Show success message
+            console.log('Added to cart:', result);
+        } catch (error) {
+            setMessage('Failed to add to cart'); // Show error message
+            console.error('Error adding to cart:', error.message);
+        }
+    };
 
     return (
         <>
@@ -69,10 +83,15 @@ export default function ProductDetail() {
                             >★</span>
                         ))}
                     </div>
-                    <button className="add-to-cart-button">Add to cart</button>
+                    <button className="add-to-cart-button" onClick={handleAddToCart}>
+    Add to cart
+</button>
+{message && <p className="message">{message}</p>}
+
                     <div className="full-desc">{fullDesc}</div>
                 </div>
             </div>
         </>
     )
+
 }
