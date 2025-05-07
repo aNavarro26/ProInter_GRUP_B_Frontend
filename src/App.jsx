@@ -1,10 +1,11 @@
 // src/App.jsx
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import CategoryPage from './pages/CategoryPage'
 import ProductDetail from './pages/ProductDetail'
 import About from './pages/About'
+import Login from "./pages/Login";
 import { getProducts } from './services/productService'
 import { ProductsContext } from './contexts/ProductsContext'
 import './index.css'
@@ -34,8 +35,9 @@ export default function App() {
           <Route path="/category/:name" element={<CategoryPage />} />
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/about" element={<About />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </BrowserRouter>
     </ProductsContext.Provider>
-  )
+  );
 }
