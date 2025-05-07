@@ -59,8 +59,7 @@ export default function Navbar() {
           {userLogged && <Link to="/cart">🛒</Link>}
           {userLogged && <Link to="/profile">👤</Link>}
           {!userLogged && <Link to="/login">Login</Link>}
-          {/* TODO: add sign up link here */}
-          {/* <Link to="/signup">SignUp</Link> */}
+          {!userLogged && <Link to="/signup">SignUp</Link>}
         </div>
       </nav>
     );

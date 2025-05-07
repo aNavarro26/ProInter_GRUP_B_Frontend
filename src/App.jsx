@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import { getProducts } from './services/productService'
 import { ProductsContext } from './contexts/ProductsContext'
 import './index.css'
+import SignUp from './pages/SignUp'
 
 export default function App() {
   const [products, setProducts] = useState(null)
@@ -36,6 +37,7 @@ export default function App() {
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/about" element={<About />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
         </Routes>
       </BrowserRouter>
     </ProductsContext.Provider>
