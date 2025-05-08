@@ -70,8 +70,9 @@ export default function CartPage() {
                                         <div className="cart-item-details">
                                             <h2 className="cart-item-title">{product.name}</h2>
                                             <p className="cart-item-description">
-                                                {product.description.split(';')[0]}
+                                                {product.description?.split(';')[0] || 'No description available'}
                                             </p>
+
                                             <p className="cart-item-price">€{item.price.toFixed(2)}</p>
 
                                             <div className="cart-item-controls">

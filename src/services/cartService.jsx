@@ -1,8 +1,11 @@
 import { getUserIdFromCookie } from "../helpers/utils";
 
 const API_URL = import.meta.env.VITE_API_URL;
-export async function getCartItems(userId) {
-    const response = await fetch(`${API_URL}/cart/${userId}/items/`);
+export async function getCartItems() {
+    const userId = getUserIdFromCookie();
+    const response = await fetch(`${API_URL}/cart/my/?user_id=${userId}`, {
+        method: 'GET',
+    });
 
     if (!response.ok) {
         throw new Error('Failed to fetch cart items');
