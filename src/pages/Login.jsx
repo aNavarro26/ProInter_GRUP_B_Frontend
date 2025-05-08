@@ -8,11 +8,7 @@ export default function LoginPage() {
   
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add login logic here
     Login(e.nativeEvent.srcElement[0].value, e.nativeEvent.srcElement[1].value)
-    // Reset form
-    // setEmail('');
-    // setPassword('');
   };
   async function Login(username, password) {
       const res = await fetch(`${API_URL}/users/login/`, {
