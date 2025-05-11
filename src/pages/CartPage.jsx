@@ -2,9 +2,11 @@ import { useCart } from '../contexts/CartContext';
 import { removeFromCart, updateCartQuantity } from '../services/cartService';
 import Navbar from '../components/Navbar';
 import './CartPage.css';
+import { useNavigate } from 'react-router-dom';
 
 export default function CartPage() {
     const { cartItems, cartId, loading, fetchCart } = useCart();
+    const navigate = useNavigate();
 
     const handleQuantityChange = async (itemId, qty) => {
         if (qty < 1 || !cartId) return;
@@ -25,6 +27,9 @@ export default function CartPage() {
             console.error('Error removing item:', err);
         }
     };
+
+    const total = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
+    const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
     if (loading) {
         return (
@@ -92,11 +97,20 @@ export default function CartPage() {
                             })}
 
                             <div className="cart-summary">
-                                <h3>
-                                    Total: €
-                                    {cartItems.reduce((sum, item) => sum + item.subtotal, 0).toFixed(2)}
-                                </h3>
-                                <button className="checkout-button">Proceed to Checkout</button>
+                                <h3>Total: €{total.toFixed(2)}</h3>
+                                <button
+                                    className="checkout-button"
+                                    onClick={() =>
+                                        navigate('/checkout', {
+                                            state: {
+                                                total,
+                                                itemCount
+                                            }
+                                        })
+                                    }
+                                >
+                                    Proceed to Checkout
+                                </button>
                             </div>
                         </>
                     )}

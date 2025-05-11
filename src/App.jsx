@@ -12,6 +12,7 @@ import { ProductsContext } from './contexts/ProductsContext'
 import { CartProvider } from './contexts/CartContext';
 import './index.css'
 import SignUp from './pages/SignUp'
+import CheckoutPage from './pages/CheckoutPage';
 import Profile from './pages/Profile'
 
 export default function App() {
@@ -45,6 +46,7 @@ export default function App() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/cartpage" element={<CartPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
           </Routes>
         </BrowserRouter>
       </ProductsContext.Provider>
