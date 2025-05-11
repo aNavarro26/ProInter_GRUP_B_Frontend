@@ -8,7 +8,6 @@ export default function CartPage() {
     const [loading, setLoading] = useState(true);
 
     const cartItems = Array.isArray(cart?.items) ? cart.items : [];
-    const total = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
 
     useEffect(() => {
         fetchCart();
@@ -25,26 +24,36 @@ export default function CartPage() {
         }
     };
 
-    const handleQuantityChange = async (id, qty) => {
-        if (qty < 1) return;
+    const handleQuantityChange = async (itemId, qty) => {
+        if (qty < 1 || !cart) return;
         try {
-            await updateCartQuantity(id, qty);
-            fetchCart();
+            await updateCartQuantity(cart.cart_id, itemId, qty);
+            await fetchCart();
         } catch (err) {
             console.error('Error updating quantity:', err);
         }
     };
 
-    const handleRemove = async (id) => {
+    const handleRemove = async (itemId) => {
+        if (!cart) return;
         try {
-            await removeFromCart(id);
-            fetchCart();
+            await removeFromCart(cart.cart_id, itemId);
+            await fetchCart();
         } catch (err) {
             console.error('Error removing item:', err);
         }
     };
 
-    if (loading) return <div className="cart-page"><div className="cart-container"><p>Loading...</p></div></div>;
+
+    if (loading) {
+        return (
+            <div className="cart-page">
+                <div className="cart-container">
+                    <p>Loading...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <>
@@ -102,7 +111,9 @@ export default function CartPage() {
                             })}
 
                             <div className="cart-summary">
-                                <h3>Total: €{total.toFixed(2)}</h3>
+                                <h3>Total: €
+                                    {cartItems.reduce((sum, item) => sum + item.subtotal, 0).toFixed(2)}
+                                </h3>
                                 <button className="checkout-button">Proceed to Checkout</button>
                             </div>
                         </>

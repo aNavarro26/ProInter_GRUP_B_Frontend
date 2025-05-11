@@ -97,35 +97,41 @@ export default function Navbar() {
             >
               <Link to={hasCart ? "/cartpage" : "/cart"}>🛒</Link>
 
-              {cartHover && hasCart && cartItems.length > 0 && (
-                <div className="cart-hover-preview">
-                  {cartItems.slice(0, 3).map((item) => {
-                    const firstImage = item.product.image_url?.split(',')[0] || 'default.jpg';
-                    return (
-                      <div key={item.cart_item_id} className="cart-hover-item">
-                        <img
-                          src={`${import.meta.env.BASE_URL}${firstImage}`}
-                          alt={item.product.name}
-                          className="cart-hover-img"
-                        />
-                        <div className="cart-hover-details">
-                          <span className="name">{item.product.name}</span>
-                          <span className="qty-price">
-                            x{item.quantity} – €{item.price.toFixed(2)}
-                          </span>
+              {cartHover && (
+                <>
+                  {hasCart && cartItems.length > 0 ? (
+                    <div className="cart-hover-preview">
+                      {cartItems.slice(0, 3).map((item) => {
+                        const firstImage = item.product.image_url?.split(',')[0] || 'default.jpg';
+                        return (
+                          <div key={item.cart_item_id} className="cart-hover-item">
+                            <img
+                              src={`${import.meta.env.BASE_URL}${firstImage}`}
+                              alt={item.product.name}
+                              className="cart-hover-img"
+                            />
+                            <div className="cart-hover-details">
+                              <span className="name">{item.product.name}</span>
+                              <span className="qty-price">
+                                x{item.quantity} – €{item.price.toFixed(2)}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                      {cartItems.length > 3 && (
+                        <div className="cart-hover-more">
+                          <Link to="/cartpage">...and {cartItems.length - 3} more</Link>
                         </div>
+                      )}
+                      <div className="cart-hover-total">
+                        Total: €{cartItems.reduce((sum, item) => sum + item.subtotal, 0).toFixed(2)}
                       </div>
-                    );
-                  })}
-                  {cartItems.length > 3 && (
-                    <div className="cart-hover-more">
-                      <Link to="/cartpage">...and {cartItems.length - 3} more</Link>
                     </div>
+                  ) : (
+                    <CartPreview visible={true} />
                   )}
-                  <div className="cart-hover-total">
-                    Total: €{cartItems.reduce((sum, item) => sum + item.subtotal, 0).toFixed(2)}
-                  </div>
-                </div>
+                </>
               )}
             </div>
             <Link to="/profile">👤</Link>
@@ -137,7 +143,6 @@ export default function Navbar() {
           </>
         )}
       </div>
-
     </nav>
   )
 }
