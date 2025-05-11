@@ -1,26 +1,114 @@
-import { useLocation } from 'react-router-dom';
-import './CheckoutPage.css'; // optional styling
+import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useCart } from '../contexts/CartContext';
+import { getUserIdFromCookie } from '../helpers/utils';
+import './CheckoutPage.css';
 
 export default function CheckoutPage() {
+    const { cartItems, cartId } = useCart();
     const location = useLocation();
-    const total = location.state?.total || 0;
-    const itemCount = location.state?.itemCount || 0;
+    const navigate = useNavigate();
+    const userId = getUserIdFromCookie();
 
-    const handleSubmit = (e) => {
+    const total = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
+    const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+    const [submitting, setSubmitting] = useState(false);
+    const [error, setError] = useState('');
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('');
         const form = e.target;
-        const name = form.name.value.trim();
-        const card = form.card.value.trim();
-        const date = form.expiry.value;
-        const method = form.method.value;
-        const notes = form.notes.value.trim();
 
-        if (!name || card.length < 12 || !date || !method) {
-            alert("Please complete all required fields correctly.");
+        // Payment
+        const method = form.method.value;
+        const cardNumber = form.card.value.trim();
+        const cvv = form.cvv.value.trim();
+        const expiry = form.expiry.value;
+
+        // Shipping
+        const shipping = {
+            firstName: form.firstName.value.trim(),
+            lastName: form.lastName.value.trim(),
+            street: form.street.value.trim(),
+            houseNumber: form.houseNumber.value.trim(),
+            apartment: form.apartment.value.trim(),
+            postalCode: form.postalCode.value.trim(),
+            city: form.city.value.trim(),
+            state: form.state.value,
+            notes: form.notes.value.trim(),
+        };
+
+        // Validates
+        if (
+            !userId ||
+            !method ||
+            cardNumber.length < 12 ||
+            cvv.length < 3 ||
+            !expiry ||
+            !shipping.firstName ||
+            !shipping.lastName ||
+            !shipping.street ||
+            !shipping.houseNumber ||
+            !shipping.postalCode ||
+            !shipping.city ||
+            !shipping.state
+        ) {
+            setError('Por favor, completa todos los campos requeridos correctamente.');
             return;
         }
 
-        alert("Purchase confirmed!");
+        // Body
+        const payload = {
+            customer: Number(userId),
+            total,
+            items: cartItems.map(it => ({
+                product: it.product.product_id,
+                quantity: it.quantity,
+                price: it.price,
+                subtotal: it.subtotal
+            })),
+            shipping: {
+                name: `${shipping.firstName} ${shipping.lastName}`,
+                address: `${shipping.street} ${shipping.houseNumber}${shipping.apartment ? ', ' + shipping.apartment : ''}`,
+                postal_code: shipping.postalCode,
+                city: shipping.city,
+                state: shipping.state,
+                notes: shipping.notes
+            },
+            payment: {
+                method,
+                card_number: cardNumber,
+                expiry,
+                cvv
+            }
+        };
+
+        setSubmitting(true);
+        try {
+            const res = await fetch(
+                `${import.meta.env.VITE_API_URL}/orders/${location.state.orderId}/status/`,
+                {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        status: 'Completed',
+                        customer: Number(userId)
+                    })
+                }
+            );
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                throw new Error(errData.error || 'Error actualizando el pedido');
+            }
+            navigate('/order-success', { state: { orderId: location.state.orderId } });
+        } catch (err) {
+            console.error(err);
+            setError(err.message);
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     return (
@@ -28,96 +116,70 @@ export default function CheckoutPage() {
             <h2>Checkout Summary</h2>
             <p><strong>Total:</strong> €{total.toFixed(2)}</p>
             <p><strong>Number of Items:</strong> {itemCount}</p>
+            {error && <p className="error">{error}</p>}
 
-            <form
-    onSubmit={(e) => {
-        e.preventDefault();
-        const form = e.target;
+            <form onSubmit={handleSubmit}>
+                <h3>Payment Details</h3>
+                <div>
+                    <label>Payment Method*:</label>
+                    <select name="method" required disabled={submitting}>
+                        <option value="">--Select--</option>
+                        <option value="visa">Visa</option>
+                        <option value="mastercard">MasterCard</option>
+                        <option value="paypal">PayPal</option>
+                    </select>
+                </div>
 
-        const name = form.name.value.trim();
-        const address = form.address.value.trim();
-        const card = form.card.value.trim();
-        const cvv = form.cvv.value.trim();
-        const date = form.expiry.value;
-        const method = form.method.value;
-        const notes = form.notes.value.trim();
+                <div>
+                    <label>Credit Card Number*:</label>
+                    <input type="text" name="card" required disabled={submitting} />
+                </div>
 
-        if (!name || !address || card.length < 12 || cvv.length !== 3 || !date || !method) {
-            alert("Please complete all required fields correctly.");
-            return;
-        }
+                <div>
+                    <label>CVV*:</label>
+                    <input type="text" name="cvv" required minLength={3} maxLength={4} disabled={submitting} />
+                </div>
 
-        alert("Purchase confirmed!");
-    }}
->
-    <div>
-        <label>Full Name:</label>
-        <input type="text" name="name" required />
-    </div>
+                <div>
+                    <label>Expiry Date*:</label>
+                    <input type="month" name="expiry" required disabled={submitting} />
+                </div>
 
+                <h3>Delivery Information</h3>
+                <div className="delivery-address">
+                    <div className="form-row">
+                        <input type="text" name="firstName" placeholder="First Name *" required disabled={submitting} />
+                        <input type="text" name="lastName" placeholder="Last Name *" required disabled={submitting} />
+                    </div>
+                    <div className="form-row">
+                        <input type="text" name="street" placeholder="Street *" required disabled={submitting} />
+                        <input type="text" name="houseNumber" placeholder="House Number *" required disabled={submitting} />
+                    </div>
+                    <div className="form-row">
+                        <input type="text" name="apartment" placeholder="Apt/Suite (opt)" disabled={submitting} />
+                    </div>
+                    <div className="form-row">
+                        <input type="text" name="postalCode" placeholder="Postal Code *" required disabled={submitting} />
+                        <input type="text" name="city" placeholder="City *" required disabled={submitting} />
+                        <select name="state" required disabled={submitting}>
+                            <option value="">State/Province *</option>
+                            <option value="A Coruña">A Coruña</option>
+                            <option value="Barcelona">Barcelona</option>
+                            <option value="Madrid">Madrid</option>
+                            <option value="Tarragona">Tarragona</option>
+                        </select>
+                    </div>
+                </div>
 
-    <div>
-        <label>Credit Card Number:</label>
-        <input type="number" name="card" required />
-    </div>
+                <div>
+                    <label>Delivery Notes:</label>
+                    <textarea name="notes" placeholder="Optional notes..." rows="4" disabled={submitting} />
+                </div>
 
-    <div>
-        <label>CVV:</label>
-        <input type="number" name="cvv" required min="100" max="999" placeholder="mm/yy"/>
-    </div>
-
-    <div>
-        <label>Expiry Date:</label>
-        <input type="date" name="expiry" required />
-    </div>
-
-    <div>
-        <label>Payment Method:</label>
-        <select name="method" required>
-            <option value="">--Select--</option>
-            <option value="visa">Visa</option>
-            <option value="mastercard">MasterCard</option>
-            <option value="paypal">PayPal</option>
-        </select>
-    </div>
-
-    <div>
-        <label>Delivery Notes:</label>
-        <textarea name="notes" placeholder="Optional notes..." rows="4" />
-    </div>
-    <h2>Delivery Information</h2>
-
-<div className="delivery-address">
-  <div className="form-row">
-    <input type="text" name="firstName" placeholder="First Name *" required />
-    <input type="text" name="lastName" placeholder="Last Name *" required />
-  </div>
-
-  <div className="form-row">
-    <input type="text" name="street" placeholder="Street *" required />
-    <input type="text" name="houseNumber" placeholder="House Number *" required />
-  </div>
-
-  <div className="form-row">
-    <input type="text" name="apartment" placeholder="Apartment, suite, building (optional)" />
-  </div>
-
-  <div className="form-row">
-    <input type="text" name="postalCode" placeholder="Postal Code *" required />
-    <input type="text" name="city" placeholder="City *" required />
-    <select name="state" required>
-      <option value="">State/Province *</option>
-      <option value="A Coruña">A Coruña</option>
-      <option value="Barcelona">Barcelona</option>
-      <option value="Madrid">Madrid</option>
-      <option value="Tarragona">Barcelona</option>
-    </select>
-  </div>
-</div>
-
-    <button type="submit">Confirm Purchase</button>
-</form>
-
+                <button type="submit" disabled={submitting}>
+                    {submitting ? 'Processing…' : 'Confirm Purchase'}
+                </button>
+            </form>
         </div>
     );
 }
