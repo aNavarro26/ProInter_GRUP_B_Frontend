@@ -12,6 +12,7 @@ import { ProductsContext } from './contexts/ProductsContext'
 import { CartProvider } from './contexts/CartContext';
 import './index.css'
 import SignUp from './pages/SignUp'
+import Profile from './pages/Profile'
 
 export default function App() {
   const [products, setProducts] = useState(null)
@@ -42,6 +43,7 @@ export default function App() {
             <Route path="/cart" element={<Cart />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/cartpage" element={<CartPage />} />
           </Routes>
         </BrowserRouter>
