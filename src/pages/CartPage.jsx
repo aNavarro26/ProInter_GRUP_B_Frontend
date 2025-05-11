@@ -1,56 +1,45 @@
-import { useState, useEffect } from 'react';
-import { getCartItems, removeFromCart, updateCartQuantity } from '../services/cartService';
+import { useCart } from '../contexts/CartContext';
+import { removeFromCart, updateCartQuantity } from '../services/cartService';
 import Navbar from '../components/Navbar';
 import './CartPage.css';
 import { useNavigate } from 'react-router-dom';
 
 export default function CartPage() {
-    const [cart, setCart] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [showCheckout, setShowCheckout] = useState(false);
+    const { cartItems, cartId, loading, fetchCart } = useCart();
+    const navigate = useNavigate();
 
-    const cartItems = Array.isArray(cart?.items) ? cart.items : [];
-    const total = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
-
-
-    useEffect(() => {
-        fetchCart();
-    }, []);
-
-    const fetchCart = async () => {
+    const handleQuantityChange = async (itemId, qty) => {
+        if (qty < 1 || !cartId) return;
         try {
-            const data = await getCartItems();
-            setCart(data);
-        } catch (err) {
-            console.error('Failed to load cart:', err);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleQuantityChange = async (id, qty) => {
-        if (qty < 1) return;
-        try {
-            await updateCartQuantity(id, qty);
-            fetchCart();
+            await updateCartQuantity(cartId, itemId, qty);
+            await fetchCart();
         } catch (err) {
             console.error('Error updating quantity:', err);
         }
     };
 
-const handleRemove = async (productId) => {
-    try {
-        await removeFromCart(productId);
-        fetchCart(); // refresh the cart after removal
-    } catch (err) {
-        console.error('Error removing item:', err);
+    const handleRemove = async (itemId) => {
+        if (!cartId) return;
+        try {
+            await removeFromCart(cartId, itemId);
+            await fetchCart();
+        } catch (err) {
+            console.error('Error removing item:', err);
+        }
+    };
+
+    const total = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
+    const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+    if (loading) {
+        return (
+            <div className="cart-page">
+                <div className="cart-container">
+                    <p>Loading...</p>
+                </div>
+            </div>
+        );
     }
-};
-const navigate = useNavigate();
-
-
-
-    if (loading) return <div className="cart-page"><div className="cart-container"><p>Loading...</p></div></div>;
 
     return (
         <>
@@ -96,34 +85,32 @@ const navigate = useNavigate();
 
                                         <div className="cart-item-actions">
                                             <p className="cart-item-subtotal">€{(item.price * item.quantity).toFixed(2)}</p>
-<button onClick={() => handleRemove(item.product.product_id)} className="remove-button">
-    Remove
-</button>
-
+                                            <button
+                                                onClick={() => handleRemove(item.cart_item_id)}
+                                                className="remove-button"
+                                            >
+                                                Remove
+                                            </button>
                                         </div>
                                     </div>
                                 );
                             })}
 
                             <div className="cart-summary">
-
                                 <h3>Total: €{total.toFixed(2)}</h3>
-<button
-    className="checkout-button"
-    onClick={() =>
-        navigate('/checkout', {
-            state: {
-                total: total,
-                itemCount: cartItems.reduce((sum, item) => sum + item.quantity, 0),
-            }
-        })
-    }
->
-    Proceed to Checkout
-</button>
-
-
-
+                                <button
+                                    className="checkout-button"
+                                    onClick={() =>
+                                        navigate('/checkout', {
+                                            state: {
+                                                total,
+                                                itemCount
+                                            }
+                                        })
+                                    }
+                                >
+                                    Proceed to Checkout
+                                </button>
                             </div>
                         </>
                     )}
