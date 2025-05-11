@@ -8,7 +8,7 @@ export default function Banner() {
         const list = products.filter(p => p.category.name.toLowerCase() === 'phone')
         return list.length
             ? list[Math.floor(Math.random() * list.length)]
-            : null
+            : null  
     }, [products])
 
     return (

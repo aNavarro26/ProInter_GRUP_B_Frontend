@@ -1,14 +1,19 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { getProductById } from '../services/productService'
+import { addToCart } from '../services/cartService'
 import Navbar from '../components/Navbar'
 import '../index.css'
+import { getUserIdFromCookie } from '../helpers/utils'
+import { useCart } from '../contexts/CartContext';
 
 export default function ProductDetail() {
     const { id } = useParams()
     const [product, setProduct] = useState(null)
     const [loading, setLoading] = useState(true)
     const [current, setCurrent] = useState(0)
+    const [message, setMessage] = useState('')
+    const { fetchCart } = useCart()
 
     useEffect(() => {
         getProductById(id)
@@ -30,6 +35,24 @@ export default function ProductDetail() {
 
     const prev = () => setCurrent(i => (i === 0 ? images.length - 1 : i - 1))
     const next = () => setCurrent(i => (i === images.length - 1 ? 0 : i + 1))
+
+    const handleAddToCart = async () => {
+        try {
+            const userId = getUserIdFromCookie();
+            if (!userId) {
+                setMessage('You must be logged in to add items to cart');
+                return;
+            }
+            console.log("product before sending:", product)
+            const result = await addToCart(product);
+            await fetchCart();
+            setMessage('Product added to cart!');
+            console.log('Added to cart:', result);
+        } catch (error) {
+            setMessage('Failed to add to cart');
+            console.error('Error adding to cart:', error.message);
+        }
+    };
 
     return (
         <>
@@ -69,10 +92,14 @@ export default function ProductDetail() {
                             >★</span>
                         ))}
                     </div>
-                    <button className="add-to-cart-button">Add to cart</button>
+                    <button className="add-to-cart-button" onClick={handleAddToCart}>
+                        Add to cart
+                    </button>
+                    {message && <p className="message">{message}</p>}
                     <div className="full-desc">{fullDesc}</div>
-                </div>
-            </div>
+                </div >
+            </div >
         </>
     )
+
 }
