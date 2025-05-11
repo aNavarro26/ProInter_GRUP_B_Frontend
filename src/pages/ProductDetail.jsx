@@ -5,6 +5,7 @@ import { addToCart } from '../services/cartService'
 import Navbar from '../components/Navbar'
 import '../index.css'
 import { getUserIdFromCookie } from '../helpers/utils'
+import { useCart } from '../contexts/CartContext';
 
 export default function ProductDetail() {
     const { id } = useParams()
@@ -12,6 +13,7 @@ export default function ProductDetail() {
     const [loading, setLoading] = useState(true)
     const [current, setCurrent] = useState(0)
     const [message, setMessage] = useState('')
+    const { fetchCart } = useCart()
 
     useEffect(() => {
         getProductById(id)
@@ -43,6 +45,7 @@ export default function ProductDetail() {
             }
             console.log("product before sending:", product)
             const result = await addToCart(product);
+            await fetchCart();
             setMessage('Product added to cart!');
             console.log('Added to cart:', result);
         } catch (error) {

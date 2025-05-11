@@ -1,4 +1,3 @@
-// src/App.jsx
 import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
@@ -10,6 +9,7 @@ import Login from "./pages/Login";
 import CartPage from "./pages/CartPage"
 import { getProducts } from './services/productService'
 import { ProductsContext } from './contexts/ProductsContext'
+import { CartProvider } from './contexts/CartContext';
 import './index.css'
 import SignUp from './pages/SignUp'
 
@@ -31,19 +31,21 @@ export default function App() {
   }
 
   return (
-    <ProductsContext.Provider value={products}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/category/:name" element={<CategoryPage />} />
-          <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/cartpage" element={<CartPage />} />
-        </Routes>
-      </BrowserRouter>
-    </ProductsContext.Provider>
+    <CartProvider>
+      <ProductsContext.Provider value={products}>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/category/:name" element={<CategoryPage />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/cartpage" element={<CartPage />} />
+          </Routes>
+        </BrowserRouter>
+      </ProductsContext.Provider>
+    </CartProvider>
   );
 }

@@ -1,33 +1,15 @@
-import { useState, useEffect } from 'react';
-import { getCartItems, removeFromCart, updateCartQuantity } from '../services/cartService';
+import { useCart } from '../contexts/CartContext';
+import { removeFromCart, updateCartQuantity } from '../services/cartService';
 import Navbar from '../components/Navbar';
 import './CartPage.css';
 
 export default function CartPage() {
-    const [cart, setCart] = useState(null);
-    const [loading, setLoading] = useState(true);
-
-    const cartItems = Array.isArray(cart?.items) ? cart.items : [];
-
-    useEffect(() => {
-        fetchCart();
-    }, []);
-
-    const fetchCart = async () => {
-        try {
-            const data = await getCartItems();
-            setCart(data);
-        } catch (err) {
-            console.error('Failed to load cart:', err);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const { cartItems, cartId, loading, fetchCart } = useCart();
 
     const handleQuantityChange = async (itemId, qty) => {
-        if (qty < 1 || !cart) return;
+        if (qty < 1 || !cartId) return;
         try {
-            await updateCartQuantity(cart.cart_id, itemId, qty);
+            await updateCartQuantity(cartId, itemId, qty);
             await fetchCart();
         } catch (err) {
             console.error('Error updating quantity:', err);
@@ -35,15 +17,14 @@ export default function CartPage() {
     };
 
     const handleRemove = async (itemId) => {
-        if (!cart) return;
+        if (!cartId) return;
         try {
-            await removeFromCart(cart.cart_id, itemId);
+            await removeFromCart(cartId, itemId);
             await fetchCart();
         } catch (err) {
             console.error('Error removing item:', err);
         }
     };
-
 
     if (loading) {
         return (
@@ -111,7 +92,8 @@ export default function CartPage() {
                             })}
 
                             <div className="cart-summary">
-                                <h3>Total: €
+                                <h3>
+                                    Total: €
                                     {cartItems.reduce((sum, item) => sum + item.subtotal, 0).toFixed(2)}
                                 </h3>
                                 <button className="checkout-button">Proceed to Checkout</button>
