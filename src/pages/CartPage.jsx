@@ -1,5 +1,6 @@
 import { useCart } from '../contexts/CartContext';
 import { removeFromCart, updateCartQuantity } from '../services/cartService';
+import { createOrder } from '../services/orderService';
 import Navbar from '../components/Navbar';
 import './CartPage.css';
 import { useNavigate } from 'react-router-dom';
@@ -54,7 +55,6 @@ export default function CartPage() {
                             {cartItems.map((item) => {
                                 const { product } = item;
                                 const firstImage = product.image_url?.split(',')[0];
-
                                 return (
                                     <div key={item.cart_item_id} className="cart-item">
                                         <img
@@ -67,24 +67,31 @@ export default function CartPage() {
                                             <p className="cart-item-description">
                                                 {product.description?.split(';')[0] || 'No description available'}
                                             </p>
-
                                             <p className="cart-item-price">€{item.price.toFixed(2)}</p>
-
                                             <div className="cart-item-controls">
                                                 <button
                                                     className="quantity-button"
-                                                    onClick={() => handleQuantityChange(item.cart_item_id, item.quantity - 1)}
-                                                >−</button>
+                                                    onClick={() =>
+                                                        handleQuantityChange(item.cart_item_id, item.quantity - 1)
+                                                    }
+                                                >
+                                                    −
+                                                </button>
                                                 <span className="quantity-display">{item.quantity}</span>
                                                 <button
                                                     className="quantity-button"
-                                                    onClick={() => handleQuantityChange(item.cart_item_id, item.quantity + 1)}
-                                                >+</button>
+                                                    onClick={() =>
+                                                        handleQuantityChange(item.cart_item_id, item.quantity + 1)
+                                                    }
+                                                >
+                                                    +
+                                                </button>
                                             </div>
                                         </div>
-
                                         <div className="cart-item-actions">
-                                            <p className="cart-item-subtotal">€{(item.price * item.quantity).toFixed(2)}</p>
+                                            <p className="cart-item-subtotal">
+                                                €{(item.price * item.quantity).toFixed(2)}
+                                            </p>
                                             <button
                                                 onClick={() => handleRemove(item.cart_item_id)}
                                                 className="remove-button"
@@ -100,14 +107,21 @@ export default function CartPage() {
                                 <h3>Total: €{total.toFixed(2)}</h3>
                                 <button
                                     className="checkout-button"
-                                    onClick={() =>
-                                        navigate('/checkout', {
-                                            state: {
-                                                total,
-                                                itemCount
-                                            }
-                                        })
-                                    }
+                                    onClick={async () => {
+                                        try {
+                                            const order = await createOrder(cartItems);
+                                            navigate('/checkout', {
+                                                state: {
+                                                    orderId: order.order_id,
+                                                    total,
+                                                    itemCount
+                                                }
+                                            });
+                                        } catch (err) {
+                                            console.error('Error creating order:', err);
+                                            alert('Could not create order. Please try again.');
+                                        }
+                                    }}
                                 >
                                     Proceed to Checkout
                                 </button>

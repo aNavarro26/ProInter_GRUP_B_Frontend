@@ -7,6 +7,7 @@ import About from './pages/About'
 import Cart from './components/Cart'
 import Login from "./pages/Login";
 import CartPage from "./pages/CartPage"
+import OrderSuccess from './pages/OrderSuccess';
 import { getProducts } from './services/productService'
 import { ProductsContext } from './contexts/ProductsContext'
 import { CartProvider } from './contexts/CartContext';
@@ -47,6 +48,7 @@ export default function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/cartpage" element={<CartPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/order-success" element={<OrderSuccess />} />
           </Routes>
         </BrowserRouter>
       </ProductsContext.Provider>
