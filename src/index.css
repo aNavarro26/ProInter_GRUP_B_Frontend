@@ -168,7 +168,7 @@ body {
   overflow: visible;
   user-select: none;
   cursor: grab;
-  background-color: #b6b6b6;
+  background-color: #0070f3;
 }
 
 .circular-carousel-container:active {
