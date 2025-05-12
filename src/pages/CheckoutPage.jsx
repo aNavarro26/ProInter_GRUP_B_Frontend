@@ -4,6 +4,8 @@ import { useCart } from '../contexts/CartContext';
 import { getUserIdFromCookie } from '../helpers/utils';
 import './CheckoutPage.css';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function CheckoutPage() {
     const { cartItems, setCartItems } = useCart();
     const location = useLocation();
@@ -19,82 +21,58 @@ export default function CheckoutPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        const form = e.target;
+        setSubmitting(true);
 
+        const form = e.target;
+        const rawCard = form.card.value.trim();
+        const cardNumber = rawCard.replace(/\s+/g, '');
         // Payment
-        const method = form.method.value;
-        const cardNumber = form.card.value.trim();
-        const cvv = form.cvv.value.trim();
-        const expiry = form.expiry.value;
+        const payment = {
+            method: form.method.value,
+            card_number: cardNumber,
+            cvv: form.cvv.value.trim(),
+            expiry: form.expiry.value,
+        };
 
         // Shipping
         const shipping = {
-            firstName: form.firstName.value.trim(),
-            lastName: form.lastName.value.trim(),
-            street: form.street.value.trim(),
-            houseNumber: form.houseNumber.value.trim(),
-            apartment: form.apartment.value.trim(),
-            postalCode: form.postalCode.value.trim(),
+            name: `${form.firstName.value.trim()} ${form.lastName.value.trim()}`,
+            address: `${form.street.value.trim()} ${form.houseNumber.value.trim()}${form.apartment.value.trim() ? ', ' + form.apartment.value.trim() : ''}`,
+            postal_code: form.postalCode.value.trim(),
             city: form.city.value.trim(),
             state: form.state.value,
             notes: form.notes.value.trim(),
         };
 
-        // Validates
+        // Validación mínima
         if (
             !userId ||
-            !method ||
+            !payment.method ||
             cardNumber.length < 12 ||
-            cvv.length < 3 ||
-            !expiry ||
-            !shipping.firstName ||
-            !shipping.lastName ||
-            !shipping.street ||
-            !shipping.houseNumber ||
-            !shipping.postalCode ||
+            payment.cvv.length < 3 ||
+            !payment.expiry ||
+            !shipping.name ||
+            !shipping.address ||
+            !shipping.postal_code ||
             !shipping.city ||
             !shipping.state
         ) {
             setError('Por favor, completa todos los campos requeridos correctamente.');
+            setSubmitting(false);
             return;
         }
 
-        // Body
-        const payload = {
-            customer: Number(userId),
-            total,
-            items: cartItems.map(it => ({
-                product: it.product.product_id,
-                quantity: it.quantity,
-                price: it.price,
-                subtotal: it.subtotal
-            })),
-            shipping: {
-                name: `${shipping.firstName} ${shipping.lastName}`,
-                address: `${shipping.street} ${shipping.houseNumber}${shipping.apartment ? ', ' + shipping.apartment : ''}`,
-                postal_code: shipping.postalCode,
-                city: shipping.city,
-                state: shipping.state,
-                notes: shipping.notes
-            },
-            payment: {
-                method,
-                card_number: cardNumber,
-                expiry,
-                cvv
-            }
-        };
-
-        setSubmitting(true);
         try {
             const res = await fetch(
-                `${import.meta.env.VITE_API_URL}/orders/${location.state.orderId}/status/`,
+                `${API_URL}/orders/${location.state.orderId}/status/`,
                 {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
+                        customer: Number(userId),
                         status: 'Completed',
-                        customer: Number(userId)
+                        payment,
+                        shipping
                     })
                 }
             );
@@ -103,7 +81,7 @@ export default function CheckoutPage() {
                 throw new Error(errData.error || 'Error actualizando el pedido');
             }
             navigate('/order-success', { state: { orderId: location.state.orderId } });
-            setCartItems([])
+            setCartItems([]);
         } catch (err) {
             console.error(err);
             setError(err.message);

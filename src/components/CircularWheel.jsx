@@ -10,7 +10,6 @@ export default function CircularWheel() {
     const [isDragging, setIsDragging] = useState(false)
     const [startX, setStartX] = useState(0)
     const [moved, setMoved] = useState(false)
-    const base = import.meta.env.BASE_URL
 
     // Random slice by 10 products
     useEffect(() => {
@@ -65,7 +64,7 @@ export default function CircularWheel() {
                 {slice.map((product, i) => {
                     const thisAngle = i * anglePerItem + angle
                     const transform = `rotateY(${thisAngle}deg) translateZ(${radius}px)`
-                    const first = product.image_url.split(',')[0]
+                    const first = product.image_url[0]
                     return (
                         <Link
                             key={product.product_id}
@@ -77,7 +76,7 @@ export default function CircularWheel() {
                             onClick={e => moved && e.preventDefault()}
                         >
                             <img
-                                src={`${base}${first}`}
+                                src={first}
                                 alt={product.name}
                                 draggable={false}
                                 onDragStart={e => e.preventDefault()}

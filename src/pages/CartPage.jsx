@@ -54,13 +54,17 @@ export default function CartPage() {
                         <>
                             {cartItems.map((item) => {
                                 const { product } = item;
-                                const firstImage = product.image_url?.split(',')[0];
+                                const firstImage = product.image_url?.[0] || '/default.jpg';
+
                                 return (
                                     <div key={item.cart_item_id} className="cart-item">
                                         <img
-                                            src={`${import.meta.env.BASE_URL}${firstImage}`}
+                                            src={firstImage}
                                             alt={product.name}
                                             className="cart-item-image"
+                                            onError={(e) => {
+                                                e.target.src = '/default.jpg';
+                                            }}
                                         />
                                         <div className="cart-item-details">
                                             <h2 className="cart-item-title">{product.name}</h2>

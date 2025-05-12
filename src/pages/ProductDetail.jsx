@@ -28,7 +28,7 @@ export default function ProductDetail() {
     if (loading) return <div className="spinner" />
     if (!product) return <p style={{ textAlign: 'center' }}>Product not found</p>
 
-    const images = product.image_url.split(',')
+    const images = product.image_url || []
     const [briefDesc, fullDesc] = (product.description || '')
         .split(';')
         .map(s => s.trim())
@@ -62,7 +62,7 @@ export default function ProductDetail() {
                     {images.map((src, i) => (
                         <img
                             key={i}
-                            src={`${import.meta.env.BASE_URL}${src}`}
+                            src={src}
                             alt={product.name}
                             className={i === current ? 'slide active' : 'slide'}
                         />

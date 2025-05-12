@@ -5,8 +5,6 @@ import '../index.css'
 
 export default function CategoryPreview({ category, visible }) {
     const products = useProducts()
-    const base = import.meta.env.BASE_URL
-
     // Save the selection of 8 random products by category
     const items = useMemo(() => {
         if (!category) return []
@@ -22,7 +20,7 @@ export default function CategoryPreview({ category, visible }) {
         <div className={`category-preview visible`}>
             <div className="preview-grid">
                 {items.map(p => {
-                    const [first] = p.image_url.split(',')
+                    const first = p.image_url?.[0] || ''
                     return (
                         <Link
                             key={p.product_id}
@@ -31,7 +29,7 @@ export default function CategoryPreview({ category, visible }) {
                         >
                             <div className="preview-thumb">
                                 <img
-                                    src={`${base}${first}`}
+                                    src={first}
                                     alt={p.name}
                                     draggable={false}
                                 />

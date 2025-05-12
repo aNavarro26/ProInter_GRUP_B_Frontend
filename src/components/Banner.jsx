@@ -5,21 +5,25 @@ import '../index.css'
 export default function Banner() {
     const products = useProducts()
     const phone = useMemo(() => {
-        const list = products.filter(p => p.category.name.toLowerCase() === 'phone')
+        const list = products.filter(p => p.category?.name?.toLowerCase() === 'phone')
         return list.length
             ? list[Math.floor(Math.random() * list.length)]
-            : null  
+            : null
     }, [products])
 
+    const imageSrc = phone?.image_url?.[0] || ''
     return (
         <section className="banner">
             <div className="banner-content">
                 <div className="banner-images">
-                    {phone && (
+                    {imageSrc && (
                         <img
-                            src={phone.image_url.split(',')[0]}
+                            src={imageSrc}
                             alt={phone.name}
                             draggable={false}
+                            onError={(e) => {
+                                e.target.style.display = 'none'
+                            }}
                         />
                     )}
                 </div>

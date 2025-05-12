@@ -4,7 +4,8 @@ import '../index.css'
 
 export default function ProductCard({ product }) {
     const [hovered, setHovered] = useState(false)
-    const [first, second] = product.image_url.split(',')
+    const first = product.image_url?.[0] || ''
+    const second = product.image_url?.[1] || first
 
     return (
         <Link
@@ -15,7 +16,7 @@ export default function ProductCard({ product }) {
         >
             <div className="card-image">
                 <img
-                    src={`${import.meta.env.BASE_URL}${hovered ? second : first}`}
+                    src={hovered ? second : first}
                     alt={product.name}
                 />
             </div>
