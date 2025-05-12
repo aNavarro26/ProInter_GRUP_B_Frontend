@@ -5,7 +5,7 @@ import { getUserIdFromCookie } from '../helpers/utils';
 import './CheckoutPage.css';
 
 export default function CheckoutPage() {
-    const { cartItems, cartId } = useCart();
+    const { cartItems, setCartItems } = useCart();
     const location = useLocation();
     const navigate = useNavigate();
     const userId = getUserIdFromCookie();
@@ -103,6 +103,7 @@ export default function CheckoutPage() {
                 throw new Error(errData.error || 'Error actualizando el pedido');
             }
             navigate('/order-success', { state: { orderId: location.state.orderId } });
+            setCartItems([])
         } catch (err) {
             console.error(err);
             setError(err.message);
