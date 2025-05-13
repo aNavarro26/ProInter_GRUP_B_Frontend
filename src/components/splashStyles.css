@@ -1,0 +1,55 @@
+.splash-container {
+    position: fixed;
+    inset: 0;
+    background: #f9fafb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1000px;
+    z-index: 9999;
+    animation: containerFade 2s ease-in-out forwards;
+}
+
+@keyframes containerFade {
+
+    0%,
+    60% {
+        background-color: #f9fafb;
+    }
+
+    100% {
+        background-color: transparent;
+    }
+}
+
+.splash-logo {
+    width: 200px;
+    transform-origin: center center;
+    animation: logoZoom 3s linear forwards;
+}
+
+@keyframes logoZoom {
+    0% {
+        transform: scale(0.3) translateZ(0);
+    }
+
+    20% {
+        transform: scale(1.6) translateZ(0);
+    }
+
+    40% {
+        transform: scale(1.6) translateZ(0);
+    }
+
+    60% {
+        transform: scale(6) translateZ(300px);
+    }
+
+    80% {
+        transform: scale(30) translateZ(1500px);
+    }
+
+    100% {
+        transform: scale(150) translateZ(3000px);
+    }
+}

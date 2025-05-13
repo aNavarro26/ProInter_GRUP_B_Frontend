@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from '../components/Navbar';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './Profile.css';
 
@@ -18,7 +17,7 @@ export default function Profile() {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [selected, setSelected] = useState(() =>
+  const [selected, setSelected] = useState(
     location.state?.section === 'orders' ? 'orders' : 'account'
   );
   const [message, setMessage] = useState('');
@@ -31,7 +30,7 @@ export default function Profile() {
 
   useEffect(() => {
     if (!userId) {
-      setError('No se encontró el identificador de usuario.');
+      setError('No user ID found.');
       return;
     }
     const fetchSection = async () => {
@@ -41,16 +40,25 @@ export default function Profile() {
         if (selected === 'account') {
           const respUser = await fetch(`${API_URL}/users/${userId}/`);
           const userData = await respUser.json();
-          if (respUser.ok) setUser(userData);
-          else throw new Error(userData.error || 'Error al cargar datos de usuario.');
+          if (respUser.ok) {
+            setUser(userData);
+            setForm({
+              username: userData.username,
+              full_name: userData.full_name,
+              email: userData.email,
+              address: userData.address
+            });
+          } else {
+            throw new Error(userData.error || 'Error loading user data.');
+          }
         } else {
           const respOrders = await fetch(`${API_URL}/orders/user/${userId}/`);
           const ordersData = await respOrders.json();
           if (respOrders.ok) setOrders(ordersData);
-          else throw new Error(ordersData.error || 'Error al cargar pedidos.');
+          else throw new Error(ordersData.error || 'Error loading orders.');
         }
       } catch (err) {
-        setError(err.message || 'No se pudo conectar con el servidor.');
+        setError(err.message || 'Server error.');
       } finally {
         setLoading(false);
       }
@@ -60,7 +68,7 @@ export default function Profile() {
 
   const handleLogout = () => {
     document.cookie = 'user_id=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-    window.location.href = '/';
+    navigate('/');
   };
 
   const handleSubmit = async (e) => {
@@ -76,32 +84,28 @@ export default function Profile() {
         body: JSON.stringify(form)
       });
       const data = await resp.json();
-      if (resp.ok) setMessage('Perfil actualizado correctamente.');
-      else setError(data.error || 'Error al actualizar perfil.');
+      if (resp.ok) setMessage('Profile updated successfully.');
+      else setError(data.error || 'Error updating profile.');
     } catch {
-      setError('No se pudo conectar con el servidor.');
+      setError('Server error.');
     } finally {
       setLoading(false);
     }
   };
 
   const handleCancelOrder = async (orderId) => {
-    const confirmed = window.confirm("¿Seguro que quieres cancelar este pedido?");
-    if (!confirmed) return;
+    if (!window.confirm('Are you sure you want to cancel this order?')) return;
     try {
       const resp = await fetch(`${API_URL}/orders/${orderId}/status/`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'Cancelled', customer: Number(userId) })
       });
-      if (resp.ok) {
-        setOrders(prev => prev.filter(o => o.order_id !== orderId));
-      } else {
-        alert('No se pudo cancelar el pedido');
-      }
+      if (resp.ok) setOrders(prev => prev.filter(o => o.order_id !== orderId));
+      else alert('Could not cancel order.');
     } catch (err) {
-      console.error('Error cancelling order:', err);
-      alert('Error al cancelar el pedido');
+      console.error(err);
+      alert('Error cancelling order.');
     }
   };
 
@@ -112,7 +116,6 @@ export default function Profile() {
 
   return (
     <div>
-      <Navbar />
       <div className="profile-page">
         <aside className="profile-sidebar">
           <button
@@ -127,6 +130,17 @@ export default function Profile() {
           >
             Orders
           </button>
+
+          {/* Onlny ADMIN users */}
+          {user?.role === 'Admin' && (
+            <button
+              className="sidebar-button"
+              onClick={() => navigate('/admin/products')}
+            >
+              Manage Products
+            </button>
+          )}
+
           <button
             className="sidebar-button logout-button"
             onClick={handleLogout}
@@ -136,7 +150,7 @@ export default function Profile() {
         </aside>
 
         <div className="profile-content">
-          {loading && <div>Cargando...</div>}
+          {loading && <div>Loading...</div>}
           {error && <div className="profile-error">{error}</div>}
 
           {selected === 'account' && !loading && !error && (
@@ -152,7 +166,9 @@ export default function Profile() {
                     <p><strong>Address:</strong> {user.address}</p>
                     <p><strong>Role:</strong> {user.role}</p>
                   </>
-                ) : <p>No hay datos de usuario.</p>}
+                ) : (
+                  <p>No user data.</p>
+                )}
               </div>
 
               {/* Edit Profile Form */}
@@ -199,7 +215,7 @@ export default function Profile() {
                     </tr>
                   </thead>
                   <tbody>
-                    {orders.map((o) => {
+                    {orders.map(o => {
                       const items = Array.isArray(o.items) ? o.items : [];
                       const total = items.reduce((sum, i) => sum + i.subtotal, 0).toFixed(2);
                       const itemCount = items.reduce((sum, i) => sum + i.quantity, 0);

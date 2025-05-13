@@ -1,16 +1,19 @@
 /* Contenedor principal */
 .cart-page {
-    font-family: Arial, sans-serif;
-    background-color: #f5f6fa;
+    background-color: #f3f4f6;
     min-height: 100vh;
+    padding: 2rem 0;
 }
 
-/* Wrapper de todo el carrito */
 .cart-container {
     max-width: 960px;
-    margin: 2rem auto;
-    padding: 0 1rem;
+    margin: 0 auto;
+    padding: 1.5rem;
+    background-color: #ffffff;
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
+
 
 /* Título */
 .cart-container h1 {
@@ -153,4 +156,3 @@
     text-align: center;
     margin-top: 2rem;
 }
-

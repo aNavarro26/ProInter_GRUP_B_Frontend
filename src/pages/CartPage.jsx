@@ -1,7 +1,6 @@
 import { useCart } from '../contexts/CartContext';
 import { removeFromCart, updateCartQuantity } from '../services/cartService';
 import { createOrder } from '../services/orderService';
-import Navbar from '../components/Navbar';
 import './CartPage.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -44,7 +43,6 @@ export default function CartPage() {
 
     return (
         <>
-            <Navbar />
             <div className="cart-page">
                 <div className="cart-container">
                     <h1>🛒 Your Shopping Cart</h1>

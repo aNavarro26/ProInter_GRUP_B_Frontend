@@ -11,10 +11,14 @@
   BASE TYPOGRAPHY
      ============================== */
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Inter', sans-serif;
   background-color: #fff;
-  color: #333;
+  color: #1f2937;
   line-height: 1.5;
+}
+
+a {
+  color: inherit;
 }
 
 /* ==============================
@@ -573,7 +577,7 @@ body {
 }
 
 /* Global Spinner */
-.app-spinner {
+/* .app-spinner {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -588,7 +592,7 @@ body {
   width: 40px;
   height: 40px;
   animation: spin 1s linear infinite;
-}
+} */
 
 @keyframes spin {
   to {
@@ -733,4 +737,55 @@ body {
   font-weight: bold;
   text-align: right;
   font-size: 0.95em;
+}
+
+.app-content {
+  transition: filter 0.4s ease;
+}
+
+.blurred {
+  filter: blur(12px) saturate(1.1);
+}
+
+/* Frosted glass */
+.splash-container {
+  position: fixed;
+  inset: 0;
+  background: rgba(249, 250, 251, 0.6);
+  /* semi-transparente */
+  backdrop-filter: blur(20px) contrast(1.2);
+  -webkit-backdrop-filter: blur(20px) contrast(1.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* Frosted-glass dropdown categories */
+.category-preview.visible {
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(12px) saturate(1.1);
+  -webkit-backdrop-filter: blur(12px) saturate(1.1);
+}
+
+.preview-grid {
+  position: relative;
+}
+
+.preview-card {
+  transition: filter 0.3s ease, transform 0.3s ease;
+  filter: none;
+}
+
+.preview-card:hover {
+  transform: translateY(-4px) scale(1.02);
+}
+
+.preview-grid:hover .preview-card:not(:hover) {
+  filter: blur(4px);
+}
+
+body.category-blur {
+  filter: blur(12px) saturate(1.1);
+  transition: filter 0.3s ease;
 }

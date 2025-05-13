@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { getProductById } from '../services/productService'
 import { addToCart } from '../services/cartService'
-import Navbar from '../components/Navbar'
 import '../index.css'
 import { getUserIdFromCookie } from '../helpers/utils'
 import { useCart } from '../contexts/CartContext';
@@ -56,7 +55,6 @@ export default function ProductDetail() {
 
     return (
         <>
-            <Navbar />
             <div className="fade-page product-detail-container">
                 <div className="slider">
                     {images.map((src, i) => (

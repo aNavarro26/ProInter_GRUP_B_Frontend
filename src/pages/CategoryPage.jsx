@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import Navbar from '../components/Navbar';
 import ProductCard from '../components/ProductCard';
 import { getProducts } from '../services/productService';
 import '../index.css';
@@ -108,7 +107,6 @@ export default function CategoryPage() {
 
     return (
         <>
-            <Navbar />
             <div className="category-page">
                 <aside className="filters">
                     {/* Series */}

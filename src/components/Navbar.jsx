@@ -1,33 +1,36 @@
-import { Link, useLocation } from 'react-router-dom';
-import { useState } from 'react';
-import { useCart } from '../contexts/CartContext';
-import CategoryPreview from './CategoryPreview';
-import CartPreview from './CartPreview';
-import '../index.css';
-import { getUserIdFromCookie } from '../helpers/utils';
+import { Link, useLocation } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useCart } from '../contexts/CartContext'
+import CategoryPreview from './CategoryPreview'
+import CartPreview from './CartPreview'
+import '../index.css'
+import { getUserIdFromCookie } from '../helpers/utils'
 
-export default function Navbar() {
-  const loc = useLocation();
-  const [hoverCat, setHoverCat] = useState(null);
-  const [cartHover, setCartHover] = useState(false);
-  const userId = getUserIdFromCookie();
-  const userLogged = !!userId;
+export default function Navbar({ onCategoryHover = () => { } }) {
+  const loc = useLocation()
+  const [hoverCat, setHoverCat] = useState(null)
+  const [cartHover, setCartHover] = useState(false)
+  const userId = getUserIdFromCookie()
+  const userLogged = !!userId
+  const { cartItems, cartTotal } = useCart()
 
-  const { cartItems, cartTotal } = useCart();
+  useEffect(() => {
+    onCategoryHover(hoverCat)
+  }, [hoverCat, onCategoryHover])
 
   const categories = [
     { key: 'phone', label: 'Phone' },
     { key: 'audio', label: 'Audio' },
     { key: 'tablet', label: 'Tablet' },
     { key: 'wearables', label: 'Wearables' },
-  ];
+  ]
 
   return (
     <nav
       className="navbar"
       onMouseLeave={() => {
-        setHoverCat(null);
-        setCartHover(false);
+        setHoverCat(null)
+        setCartHover(false)
       }}
     >
       <div className="logo">
@@ -35,7 +38,7 @@ export default function Navbar() {
       </div>
 
       <ul>
-        {categories.map((cat) => (
+        {categories.map(cat => (
           <li
             key={cat.key}
             className={loc.pathname === `/category/${cat.key}` ? 'active' : ''}
@@ -59,47 +62,41 @@ export default function Navbar() {
               onMouseLeave={() => setCartHover(false)}
               style={{ position: 'relative', display: 'inline-block' }}
             >
-              <Link to={cartItems.length > 0 ? "/cartpage" : "/cart"}>🛒</Link>
-
-              {cartHover && (
-                <>
-                  {cartItems.length > 0 ? (
-                    <div className="cart-hover-preview">
-                      {cartItems.slice(0, 3).map((item) => {
-                        const firstImage = item.product.image_url?.[0] || '/default.jpg';
-                        return (
-                          <div key={item.cart_item_id} className="cart-hover-item">
-                            <img
-                              src={firstImage}
-                              alt={item.product.name}
-                              className="cart-hover-img"
-                              onError={(e) => {
-                                e.target.src = '/default.jpg';
-                              }}
-                            />
-                            <div className="cart-hover-details">
-                              <span className="name">{item.product.name}</span>
-                              <span className="qty-price">
-                                x{item.quantity} – €{item.price.toFixed(2)}
-                              </span>
-                            </div>
-                          </div>
-                        );
-                      })}
-                      {cartItems.length > 3 && (
-                        <div className="cart-hover-more">
-                          <Link to="/cartpage">...and {cartItems.length - 3} more</Link>
+              <Link to={cartItems.length > 0 ? '/cartpage' : '/cart'}>🛒</Link>
+              {cartHover &&
+                (cartItems.length > 0 ? (
+                  <div className="cart-hover-preview">{cartItems.slice(0, 3).map((item) => {
+                    const firstImage = item.product.image_url?.[0] || '/default.jpg';
+                    return (
+                      <div key={item.cart_item_id} className="cart-hover-item">
+                        <img
+                          src={firstImage}
+                          alt={item.product.name}
+                          className="cart-hover-img"
+                          onError={(e) => {
+                            e.target.src = '/default.jpg';
+                          }}
+                        />
+                        <div className="cart-hover-details">
+                          <span className="name">{item.product.name}</span>
+                          <span className="qty-price">
+                            x{item.quantity} – €{item.price.toFixed(2)}
+                          </span>
                         </div>
-                      )}
-                      <div className="cart-hover-total">
-                        Total: €{cartTotal.toFixed(2)}
                       </div>
-                    </div>
-                  ) : (
-                    <CartPreview visible={true} />
-                  )}
-                </>
-              )}
+                    );
+                  })}
+                    {cartItems.length > 3 && (
+                      <div className="cart-hover-more">
+                        <Link to="/cartpage">...and {cartItems.length - 3} more</Link>
+                      </div>
+                    )}
+                    <div className="cart-hover-total">
+                      Total: €{cartTotal.toFixed(2)}
+                    </div></div>
+                ) : (
+                  <CartPreview visible={true} />
+                ))}
             </div>
             <Link to="/profile">👤</Link>
           </>
@@ -111,5 +108,5 @@ export default function Navbar() {
         )}
       </div>
     </nav>
-  );
+  )
 }
