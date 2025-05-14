@@ -11,7 +11,8 @@ export default function Profile() {
     username: '',
     full_name: '',
     email: '',
-    address: ''
+    address: '',
+    password: ''
   });
   const [user, setUser] = useState(null);
   const [orders, setOrders] = useState([]);
@@ -46,7 +47,7 @@ export default function Profile() {
               username: userData.username,
               full_name: userData.full_name,
               email: userData.email,
-              address: userData.address
+              address: userData.address,
             });
           } else {
             throw new Error(userData.error || 'Error loading user data.');
@@ -77,8 +78,8 @@ export default function Profile() {
     setMessage('');
     setError('');
     try {
-      const resp = await fetch(`${API_URL}/api/user/${userId}/`, {
-        method: 'PATCH',
+      const resp = await fetch(`${API_URL}/users/${userId}/`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify(form)
@@ -112,6 +113,7 @@ export default function Profile() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
+    console.log(form)
   };
 
   return (
@@ -119,23 +121,27 @@ export default function Profile() {
       <div className="profile-page">
         <aside className="profile-sidebar">
           <button
-            className={`sidebar-button ${selected === 'account' ? 'active' : ''}`}
-            onClick={() => setSelected('account')}
+            className={`sidebar-button ${
+              selected === "account" ? "active" : ""
+            }`}
+            onClick={() => setSelected("account")}
           >
             Account
           </button>
           <button
-            className={`sidebar-button ${selected === 'orders' ? 'active' : ''}`}
-            onClick={() => setSelected('orders')}
+            className={`sidebar-button ${
+              selected === "orders" ? "active" : ""
+            }`}
+            onClick={() => setSelected("orders")}
           >
             Orders
           </button>
 
           {/* Onlny ADMIN users */}
-          {user?.role === 'Admin' && (
+          {user?.role === "Admin" && (
             <button
               className="sidebar-button"
-              onClick={() => navigate('/admin/products')}
+              onClick={() => navigate("/admin/products")}
             >
               Manage Products
             </button>
@@ -153,18 +159,28 @@ export default function Profile() {
           {loading && <div>Loading...</div>}
           {error && <div className="profile-error">{error}</div>}
 
-          {selected === 'account' && !loading && !error && (
+          {selected === "account" && !loading && !error && (
             <div className="account-section">
               {/* User Details */}
               <div className="profile-card">
                 <h2>User Details</h2>
                 {user ? (
                   <>
-                    <p><strong>Username:</strong> {user.username}</p>
-                    <p><strong>Full Name:</strong> {user.full_name}</p>
-                    <p><strong>Email:</strong> {user.email}</p>
-                    <p><strong>Address:</strong> {user.address}</p>
-                    <p><strong>Role:</strong> {user.role}</p>
+                    <p>
+                      <strong>Username:</strong> {user.username}
+                    </p>
+                    <p>
+                      <strong>Full Name:</strong> {user.full_name}
+                    </p>
+                    <p>
+                      <strong>Email:</strong> {user.email}
+                    </p>
+                    <p>
+                      <strong>Address:</strong> {user.address}
+                    </p>
+                    <p>
+                      <strong>Role:</strong> {user.role}
+                    </p>
                   </>
                 ) : (
                   <p>No user data.</p>
@@ -178,13 +194,23 @@ export default function Profile() {
                 {error && <div className="profile-error">{error}</div>}
 
                 <div className="form-card">
-                  {['username', 'full_name', 'email', 'address'].map(field => (
+                  {[
+                    "username",
+                    "full_name",
+                    "email",
+                    "address",
+                    "password",
+                  ].map((field) => (
                     <div className="form-group" key={field}>
-                      <label htmlFor={field}>{field.replace('_', ' ')}</label>
+                      <label htmlFor={field}>{field.replace("_", " ")}</label>
                       <input
                         id={field}
                         name={field}
-                        type={field === 'email' ? 'email' : 'text'}
+                        type={
+                          field === "email" || field === "password"
+                            ? field
+                            : "text"
+                        }
                         value={form[field]}
                         onChange={handleChange}
                         disabled={loading}
@@ -192,14 +218,14 @@ export default function Profile() {
                     </div>
                   ))}
                   <button type="submit" disabled={loading}>
-                    {loading ? 'Saving...' : 'Save Changes'}
+                    {loading ? "Saving..." : "Save Changes"}
                   </button>
                 </div>
               </form>
             </div>
           )}
 
-          {selected === 'orders' && !loading && !error && (
+          {selected === "orders" && !loading && !error && (
             <div className="orders-section">
               <h2>Order History</h2>
               {orders.length === 0 ? (
@@ -215,10 +241,15 @@ export default function Profile() {
                     </tr>
                   </thead>
                   <tbody>
-                    {orders.map(o => {
+                    {orders.map((o) => {
                       const items = Array.isArray(o.items) ? o.items : [];
-                      const total = items.reduce((sum, i) => sum + i.subtotal, 0).toFixed(2);
-                      const itemCount = items.reduce((sum, i) => sum + i.quantity, 0);
+                      const total = items
+                        .reduce((sum, i) => sum + i.subtotal, 0)
+                        .toFixed(2);
+                      const itemCount = items.reduce(
+                        (sum, i) => sum + i.quantity,
+                        0
+                      );
                       return (
                         <tr key={o.order_id}>
                           <td>{o.order_id}</td>
@@ -226,13 +257,17 @@ export default function Profile() {
                           <td>€{total}</td>
                           <td>
                             {o.status}
-                            {o.status === 'Pending' && (
+                            {o.status === "Pending" && (
                               <div className="order-actions">
                                 <button
                                   className="btn-pay"
                                   onClick={() =>
-                                    navigate('/checkout', {
-                                      state: { orderId: o.order_id, total: parseFloat(total), itemCount }
+                                    navigate("/checkout", {
+                                      state: {
+                                        orderId: o.order_id,
+                                        total: parseFloat(total),
+                                        itemCount,
+                                      },
                                     })
                                   }
                                 >
