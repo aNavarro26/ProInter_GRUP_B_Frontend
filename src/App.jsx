@@ -46,7 +46,7 @@ export default function App() {
 
   // hide splash after timeout
   useEffect(() => {
-    const t = setTimeout(() => setShowSplash(false), 4300)
+    const t = setTimeout(() => setShowSplash(false), 4000)
     return () => clearTimeout(t)
   }, [])
 
