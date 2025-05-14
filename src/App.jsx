@@ -7,10 +7,10 @@ import CategoryPage from './components/CategoryPage/CategoryPage'
 import ProductDetail from './components/ProductDetail/ProductDetail'
 import About from './pages/About'
 import Cart from './components/Cart/Cart'
-import Login from './pages/Login'
+import Login from './components/Login/Login'
 import CartPage from './components/CartPage/CartPage'
 import OrderSuccess from './components/OrderSuccess/OrderSuccess'
-import SignUp from './pages/SignUp'
+import SignUp from './components/SignUp/SignUp'
 import CheckoutPage from './components/CheckoutPage/CheckoutPage'
 import Profile from './components/Profile/Profile'
 import AdminProductList from './components/admin/AdminProductList'
@@ -46,7 +46,7 @@ export default function App() {
 
   // hide splash after timeout
   useEffect(() => {
-    const t = setTimeout(() => setShowSplash(false), 4300)
+    const t = setTimeout(() => setShowSplash(false), 4000)
     return () => clearTimeout(t)
   }, [])
 

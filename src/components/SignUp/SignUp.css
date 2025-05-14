@@ -1,0 +1,102 @@
+.signup-page {
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #eef2ff 0%, #ffffff 100%);
+    padding: 2rem;
+    overflow: hidden;
+}
+
+.signup-form {
+    width: 100%;
+    max-width: 450px;
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(30px) contrast(1.2) saturate(1.1);
+    -webkit-backdrop-filter: blur(30px) contrast(1.2) saturate(1.1);
+    border-radius: 1rem;
+    box-shadow: 0 16px 48px rgba(0, 112, 243, 0.2);
+    padding: 2rem;
+}
+
+.signup-form h2 {
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 2rem;
+    color: #1f2937;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s ease;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.form-group input.focused {
+    border-color: #0070f3;
+}
+
+.error-text {
+    margin-top: 0.25rem;
+    font-size: 0.85rem;
+    color: #e53e3e;
+}
+
+.success-text {
+    margin-top: 0.5rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #276749;
+}
+
+.center {
+    text-align: center;
+}
+
+button[type="submit"] {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    background-color: #0070f3;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 0.5rem;
+}
+
+button.hovered {
+    background-color: #005bb5;
+    transform: translateY(-1px);
+}
+
+.footer-text {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: 0.95rem;
+    color: #444;
+}
+
+.footer-text a {
+    color: #0070f3;
+    text-decoration: none;
+    font-weight: 600;
+}
