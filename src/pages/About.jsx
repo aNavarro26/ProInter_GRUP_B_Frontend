@@ -1,10 +1,8 @@
-import Navbar from '../components/Navbar';
 import '../index.css';
 
 export default function About() {
     return (
         <>
-            <Navbar />
             <main className="about-page" style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
                 <h1>About Axion</h1>
                 <p>

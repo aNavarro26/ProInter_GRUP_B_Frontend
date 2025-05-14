@@ -1,0 +1,94 @@
+/* ==============================
+   CART PREVIEW
+   ============================== */
+
+.cart-preview {
+    position: absolute;
+    top: 3.5rem;
+    right: 1rem;
+    width: 300px;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(30px) contrast(1.2) saturate(1.1);
+    -webkit-backdrop-filter: blur(30px) contrast(1.2) saturate(1.1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    border-radius: 0.5rem;
+    pointer-events: auto;
+    z-index: 10000;
+    transition: opacity 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.cart-preview p {
+    margin: 0.5rem 0;
+    color: #333;
+}
+
+.cart-icon-preview {
+    font-size: 2.5rem;
+    margin: 0.5rem 0;
+}
+
+/* ==============================
+   CART HOVER PREVIEW (items list)
+   ============================== */
+.cart-hover-preview {
+    position: absolute;
+    top: 2.5rem;
+    right: 0;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(12px) saturate(1.1);
+    -webkit-backdrop-filter: blur(12px) saturate(1.1);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    min-width: 240px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.cart-hover-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.cart-hover-img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 0.25rem;
+    margin-right: 0.75rem;
+    border: 1px solid #ddd;
+}
+
+.cart-hover-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.cart-hover-details .name {
+    font-weight: 600;
+    color: #222;
+}
+
+.cart-hover-details .qty-price {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.cart-hover-more,
+.cart-hover-total {
+    margin-top: 0.5rem;
+    font-weight: 600;
+    text-align: right;
+    font-size: 0.95rem;
+}
+
+.cart-hover-more a {
+    color: #0070f3;
+    text-decoration: none;
+}
