@@ -1,0 +1,71 @@
+/* Navbar.css */
+.navbar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    padding: 0 2rem;
+    border-bottom: 1px solid #eaeaea;
+    background-color: #fff;
+    z-index: 100;
+}
+
+.navbar a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.navbar .logo {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    min-width: 120px;
+    overflow: visible;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.navbar .logo-icon,
+.navbar .logo-name {
+    height: 50px;
+    width: auto;
+    transition: transform .3s ease, opacity .3s ease, margin-left .3s ease;
+}
+
+.navbar .logo-name {
+    opacity: 0;
+    margin-left: -30px;
+}
+
+.navbar .logo:hover .logo-icon {
+    transform: scale(1.1);
+}
+
+.navbar .logo:hover .logo-name {
+    opacity: 1;
+    margin-left: 10px;
+}
+
+.navbar ul {
+    display: flex;
+    gap: 1rem;
+    list-style: none;
+}
+
+.navbar ul li a {
+    color: #333;
+    transition: color .2s ease;
+}
+
+.navbar ul li.active a,
+.navbar ul li:hover a {
+    color: #0070f3;
+    font-weight: bold;
+}
+
+.nav-icons {
+    display: flex;
+    gap: 1rem;
+    font-size: 1.25rem;
+}

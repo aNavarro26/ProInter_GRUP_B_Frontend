@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useCart } from '../contexts/CartContext';
-import { getUserIdFromCookie } from '../helpers/utils';
+import { useCart } from '../../contexts/CartContext';
+import { getUserIdFromCookie } from '../../helpers/utils';
 import './CheckoutPage.css';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 export default function CheckoutPage() {
-    const { cartItems, setCartItems } = useCart();
+    const { cartItems, cartId, setCartItems } = useCart();
     const location = useLocation();
     const navigate = useNavigate();
     const userId = getUserIdFromCookie();
@@ -26,7 +26,7 @@ export default function CheckoutPage() {
         const form = e.target;
         const rawCard = form.card.value.trim();
         const cardNumber = rawCard.replace(/\s+/g, '');
-        // Payment
+
         const payment = {
             method: form.method.value,
             card_number: cardNumber,
@@ -34,7 +34,6 @@ export default function CheckoutPage() {
             expiry: form.expiry.value,
         };
 
-        // Shipping
         const shipping = {
             name: `${form.firstName.value.trim()} ${form.lastName.value.trim()}`,
             address: `${form.street.value.trim()} ${form.houseNumber.value.trim()}${form.apartment.value.trim() ? ', ' + form.apartment.value.trim() : ''}`,
@@ -44,7 +43,6 @@ export default function CheckoutPage() {
             notes: form.notes.value.trim(),
         };
 
-        // Validación mínima
         if (
             !userId ||
             !payment.method ||
@@ -80,8 +78,20 @@ export default function CheckoutPage() {
                 const errData = await res.json().catch(() => ({}));
                 throw new Error(errData.error || 'Error actualizando el pedido');
             }
-            navigate('/order-success', { state: { orderId: location.state.orderId } });
+
+            if (cartId) {
+                const delRes = await fetch(
+                    `${API_URL}/cart/${cartId}/?user_id=${userId}`,
+                    { method: 'DELETE' }
+                )
+                if (!delRes.ok) {
+                    console.warn('No se pudo eliminar el carrito en backend');
+                }
+            }
+
             setCartItems([]);
+
+            navigate('/order-success', { state: { orderId: location.state.orderId } });
         } catch (err) {
             console.error(err);
             setError(err.message);
@@ -154,7 +164,6 @@ export default function CheckoutPage() {
                     <label>Delivery Notes:</label>
                     <textarea name="notes" placeholder="Optional notes..." rows="4" disabled={submitting} />
                 </div>
-
                 <button type="submit" disabled={submitting}>
                     {submitting ? 'Processing…' : 'Confirm Purchase'}
                 </button>

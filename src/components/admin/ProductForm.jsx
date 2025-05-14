@@ -94,7 +94,6 @@ export default function ProductForm() {
             return alert('Please upload two images before submitting.');
         }
 
-        // Initial JSON save (with image_url placeholder if creating or files chosen)
         let initImageUrl = originalImageUrl; // If we edit and there are no files, we reuse it
         if (files.length) {
             const initNames = files.map(f => f.name);
@@ -119,9 +118,7 @@ export default function ProductForm() {
         const saved = await resJson.json();
         const prodId = saved.product_id;
 
-        // Always resend image_url and files (if any) via FormData
         const fd = new FormData();
-        // Recalculate image_url: if you file, base us in Renamed; If not, use original
         let finalImageUrl = originalImageUrl;
         if (files.length) {
             // rename files

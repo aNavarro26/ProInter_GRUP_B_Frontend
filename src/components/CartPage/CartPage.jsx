@@ -1,6 +1,6 @@
-import { useCart } from '../contexts/CartContext';
-import { removeFromCart, updateCartQuantity } from '../services/cartService';
-import { createOrder } from '../services/orderService';
+import { useCart } from '../../contexts/CartContext';
+import { removeFromCart, updateCartQuantity } from '../../services/cartService';
+import { createOrder } from '../../services/orderService';
 import './CartPage.css';
 import { useNavigate } from 'react-router-dom';
 

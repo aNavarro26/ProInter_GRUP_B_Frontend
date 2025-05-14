@@ -1,32 +1,35 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import SplashScreen from './components/SplashScreen'
-import Navbar from './components/Navbar'
+import SplashScreen from './components/SplashScreen/SplashScreen'
+import Navbar from './components/Navbar/Navbar'
 import Home from './pages/Home'
-import CategoryPage from './pages/CategoryPage'
-import ProductDetail from './pages/ProductDetail'
+import CategoryPage from './components/CategoryPage/CategoryPage'
+import ProductDetail from './components/ProductDetail/ProductDetail'
 import About from './pages/About'
-import Cart from './components/Cart'
-import Login from "./pages/Login"
-import CartPage from "./pages/CartPage"
-import OrderSuccess from './pages/OrderSuccess'
+import Cart from './components/Cart/Cart'
+import Login from './pages/Login'
+import CartPage from './components/CartPage/CartPage'
+import OrderSuccess from './components/OrderSuccess/OrderSuccess'
+import SignUp from './pages/SignUp'
+import CheckoutPage from './components/CheckoutPage/CheckoutPage'
+import Profile from './components/Profile/Profile'
+import AdminProductList from './components/admin/AdminProductList'
+import ProductForm from './components/admin/ProductForm'
 import { getProducts } from './services/productService'
 import { ProductsContext } from './contexts/ProductsContext'
 import { CartProvider } from './contexts/CartContext'
-import SignUp from './pages/SignUp'
-import CheckoutPage from './pages/CheckoutPage'
-import Profile from './pages/Profile'
-import AdminProductList from './pages/admin/AdminProductList'
-import ProductForm from './pages/admin/ProductForm'
 import './index.css'
 
 export default function App() {
   const [products, setProducts] = useState(null)
   const [showSplash, setShowSplash] = useState(true)
   const [dataLoaded, setDataLoaded] = useState(false)
-  const [hoverCat, setHoverCat] = useState(null)
+  const [hoverCat, setHoverCat] = useState(false)
+  const [hoverSearch, setHoverSearch] = useState(false)
+  const [hoverCart, setHoverCart] = useState(false)
+  const [hoverProfile, setHoverProfile] = useState(false)
 
-  // load in background
+  // fetch products once
   useEffect(() => {
     async function fetchData() {
       try {
@@ -41,8 +44,9 @@ export default function App() {
     fetchData()
   }, [])
 
+  // hide splash after timeout
   useEffect(() => {
-    const t = setTimeout(() => setShowSplash(false), 3000)
+    const t = setTimeout(() => setShowSplash(false), 4300)
     return () => clearTimeout(t)
   }, [])
 
@@ -50,14 +54,21 @@ export default function App() {
     return <div className="app-spinner spinner" />
   }
 
+  const shouldBlur =
+    showSplash || hoverCat || hoverSearch || hoverCart || hoverProfile
+
   return (
     <CartProvider>
       <ProductsContext.Provider value={products}>
         <BrowserRouter>
-          {/* Navbar always visible */}
-          <Navbar onCategoryHover={setHoverCat} />
+          <Navbar
+            onCategoryHover={setHoverCat}
+            onSearchHover={setHoverSearch}
+            onCartHover={setHoverCart}
+            onProfileHover={setHoverProfile}
+          />
 
-          <div className={(showSplash || hoverCat) ? 'app-content blurred' : 'app-content'}>
+          <div className={shouldBlur ? 'app-content blurred' : 'app-content'}>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/category/:name" element={<CategoryPage />} />
@@ -78,7 +89,9 @@ export default function App() {
         </BrowserRouter>
 
         {/* SplashOverlay */}
-        {(!dataLoaded || showSplash) && <SplashScreen onFinish={() => setShowSplash(false)} />}
+        {(!dataLoaded || showSplash) && (
+          <SplashScreen onFinish={() => setShowSplash(false)} />
+        )}
       </ProductsContext.Provider>
     </CartProvider>
   );

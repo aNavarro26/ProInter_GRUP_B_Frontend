@@ -1,0 +1,229 @@
+/* ==============================
+   CART PAGE (CartPage.jsx)
+   ============================== */
+
+.cart-page {
+    background-color: #f3f4f6;
+    min-height: 100vh;
+    padding: 3rem 0;
+}
+
+.cart-container {
+    width: 90vw;
+    max-width: none;
+    margin: 0 auto;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(12px) saturate(1.1);
+    -webkit-backdrop-filter: blur(12px) saturate(1.1);
+    border-radius: 1rem;
+    box-shadow: 0 12px 36px rgba(0, 112, 243, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cart-container:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 48px rgba(0, 112, 243, 0.3);
+}
+
+.cart-container h1 {
+    font-size: 2.5rem;
+    color: #1f2937;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+/* ==============================
+   CART ITEMS
+   ============================== */
+.cart-item {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: #fff;
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cart-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0, 112, 243, 0.15);
+}
+
+.cart-item-image {
+    flex-shrink: 0;
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    border: 1px solid #ececec;
+    border-radius: 0.5rem;
+    background: #fafafa;
+    padding: 0.5rem;
+}
+
+.cart-item-details {
+    flex: 1;
+}
+
+.cart-item-details .cart-item-title {
+    font-size: 1.5rem;
+    color: #0070f3;
+    margin: 0;
+}
+
+.cart-item-details .cart-item-description {
+    font-size: 1rem;
+    color: #555;
+    margin: 0.5rem 0;
+}
+
+.cart-item-details .cart-item-price {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #2d2d2d;
+}
+
+.cart-item-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.quantity-button {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #ccc;
+    background: #fff;
+    border-radius: 4px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.quantity-button:hover {
+    background: rgba(0, 112, 243, 0.1);
+    transform: translateY(-1px);
+}
+
+.quantity-display {
+    width: 24px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.cart-item-actions {
+    margin-left: 1rem;
+    text-align: right;
+}
+
+.remove-button {
+    background: none;
+    border: none;
+    color: #e74c3c;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.remove-button:hover {
+    color: #c0392b;
+}
+
+/* ==============================
+   SUMMARY + CHECKOUT
+   ============================== */
+.cart-summary {
+    text-align: right;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.cart-summary h3 {
+    font-size: 1.75rem;
+    margin: 0 0 1rem;
+    color: #1f2937;
+}
+
+.checkout-button {
+    padding: 0.75rem 2rem;
+    background: #0070f3;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.checkout-button:hover {
+    background: #005bb5;
+    transform: translateY(-2px);
+}
+
+/* ==============================
+   EMPTY CART STATE
+   ============================== */
+.cart-icon-placeholder {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 1.5rem;
+    border: 2px dashed rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cart-icon-placeholder .cart-icon {
+    font-size: 4rem;
+}
+
+.cart-message {
+    font-size: 1.25rem;
+    color: #2d2d2d;
+    margin-bottom: 1rem;
+}
+
+.cart-subtext {
+    display: block;
+    font-size: 1rem;
+    color: #555;
+    margin-top: 0.5rem;
+}
+
+.cart-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.cart-btn {
+    padding: 0.75rem 1.5rem;
+    background: #0070f3;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.cart-btn:hover {
+    background: #005bb5;
+    transform: translateY(-2px);
+}
+
+/* ==============================
+   GLOBAL BLUR UTILITY
+   ============================== */
+.app-content.blurred {
+    filter: blur(12px) saturate(1.1);
+    transition: filter 0.4s ease;
+}

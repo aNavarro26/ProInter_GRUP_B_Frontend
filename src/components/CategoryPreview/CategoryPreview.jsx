@@ -1,7 +1,8 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { useProducts } from '../contexts/ProductsContext'
-import '../index.css'
+import { useProducts } from '../../contexts/ProductsContext'
+import '../../index.css'
+import './CategoryPreview.css';
 
 export default function CategoryPreview({ category, visible }) {
     const products = useProducts()

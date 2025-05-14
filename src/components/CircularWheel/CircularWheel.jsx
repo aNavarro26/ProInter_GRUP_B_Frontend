@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { useProducts } from '../contexts/ProductsContext'
-import '../index.css'
+import { useProducts } from '../../contexts/ProductsContext'
+import '../../index.css'
+import './CircularWheel.css'
 
 export default function CircularWheel() {
     const products = useProducts()
@@ -22,7 +23,7 @@ export default function CircularWheel() {
         }
     }, [products])
 
-    // Auto‑scroll 
+    // Auto-scroll 
     useEffect(() => {
         const autoScroll = setInterval(() => {
             if (!isDragging) setAngle(prev => prev + 0.1)  //sensibility
@@ -71,7 +72,7 @@ export default function CircularWheel() {
                             to={`/product/${product.product_id}`}
                             className="carousel-item large-item"
                             style={{ transform }}
-                            draggable={false}                      // no drag in <a>
+                            draggable={false}
                             onDragStart={e => e.preventDefault()}
                             onClick={e => moved && e.preventDefault()}
                         >

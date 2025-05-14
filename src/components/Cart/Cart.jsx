@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom'
-import '../index.css'
+import '../../index.css'
+import './Cart.css';
 
 export default function Cart() {
     return (
         <div className="cart-container">
             <h2>Cart</h2>
             <div className="cart-icon-placeholder">
-                {/* Replace with actual icon/image if needed */}
                 <div className="cart-icon">🛒</div>
             </div>
             <p className="cart-message">

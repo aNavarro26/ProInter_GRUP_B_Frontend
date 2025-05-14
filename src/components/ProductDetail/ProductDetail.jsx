@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { getProductById } from '../services/productService'
-import { addToCart } from '../services/cartService'
-import '../index.css'
-import { getUserIdFromCookie } from '../helpers/utils'
-import { useCart } from '../contexts/CartContext';
+import { getProductById } from '../../services/productService'
+import { addToCart } from '../../services/cartService'
+import '../../index.css'
+import './ProductDetail.css';
+import { getUserIdFromCookie } from '../../helpers/utils'
+import { useCart } from '../../contexts/CartContext';
 
 export default function ProductDetail() {
     const { id } = useParams()

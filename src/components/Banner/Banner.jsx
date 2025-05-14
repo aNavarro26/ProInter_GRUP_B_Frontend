@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
-import { useProducts } from '../contexts/ProductsContext'
-import '../index.css'
+import { useProducts } from '../../contexts/ProductsContext'
+import '../../index.css'
+import './Banner.css'
 
 export default function Banner() {
     const products = useProducts()
