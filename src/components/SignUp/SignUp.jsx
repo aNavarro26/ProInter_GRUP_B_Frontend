@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import './SignUp.css';
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 export default function SignupPage() {
@@ -50,7 +52,6 @@ export default function SignupPage() {
       if (resp.ok) {
         setSuccessMessage(data.message || 'Registro exitoso.');
         setForm({ username: '', full_name: '', email: '', password: '', confirm_password: '', address: '' });
-
         setUserIdCookie(data.user_id);
         window.location.href = '/';
       } else {
@@ -66,26 +67,10 @@ export default function SignupPage() {
     document.cookie = `user_id=${encodeURIComponent(value)}; expires=${expires}; path=/`;
   }
 
-  const commonStyles = {
-    container: {
-      minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #eef2ff 0%, #ffffff 100%)', padding: '20px', fontFamily: 'Arial, sans-serif'
-    },
-    card: {
-      backgroundColor: '#fff', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)', width: '100%', maxWidth: '450px', padding: '30px'
-    },
-    title: { margin: '0 0 24px', fontSize: '28px', color: '#333', textAlign: 'center' },
-    label: { display: 'block', marginBottom: '6px', fontSize: '14px', color: '#555' },
-    input: focusField => ({ width: '100%', padding: '10px 12px', fontSize: '14px', border: '1px solid', borderColor: focusField ? '#7c3aed' : '#ccc', borderRadius: '6px', transition: 'border-color 0.2s', outline: 'none' }),
-    errorText: { marginTop: '4px', fontSize: '12px', color: '#e53e3e' },
-    button: hover => ({ width: '100%', padding: '12px', fontSize: '16px', fontWeight: 'bold', backgroundColor: hover ? '#5b21b6' : '#7c3aed', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', transition: 'background-color 0.2s' }),
-    footerText: { marginTop: '20px', textAlign: 'center', fontSize: '14px', color: '#666' },
-    link: { color: '#7c3aed', textDecoration: 'none', fontWeight: 'bold' }
-  };
-
   return (
-    <div style={commonStyles.container}>
-      <div style={commonStyles.card}>
-        <h2 style={commonStyles.title}>Crear cuenta</h2>
+    <div className="signup-page">
+      <div className="signup-form">
+        <h2>Crear cuenta</h2>
         <form onSubmit={handleSubmit} noValidate>
           {['username', 'full_name', 'email', 'password', 'confirm_password', 'address'].map(field => {
             const labelMap = {
@@ -96,12 +81,11 @@ export default function SignupPage() {
               confirm_password: 'Repetir contraseña',
               address: 'Dirección (opcional)'
             };
-            const isFocused = focusField === field;
             const isPassword = field.includes('password');
             const type = isPassword ? 'password' : field === 'email' ? 'email' : 'text';
             return (
-              <div key={field} style={{ marginBottom: '18px' }}>
-                <label htmlFor={field} style={commonStyles.label}>{labelMap[field]}</label>
+              <div key={field} className="form-group">
+                <label htmlFor={field}>{labelMap[field]}</label>
                 <input
                   type={type}
                   name={field}
@@ -110,28 +94,28 @@ export default function SignupPage() {
                   onChange={handleChange}
                   onFocus={() => setFocusField(field)}
                   onBlur={() => setFocusField('')}
-                  style={commonStyles.input(isFocused)}
+                  className={focusField === field ? 'focused' : ''}
                 />
-                {errors[field] && <div style={commonStyles.errorText}>{errors[field]}</div>}
+                {errors[field] && <div className="error-text">{errors[field]}</div>}
               </div>
             );
           })}
 
-          {serverError && <div style={{ ...commonStyles.errorText, textAlign: 'center' }}>{serverError}</div>}
-          {successMessage && <div style={{ marginTop: '10px', textAlign: 'center', color: '#276749' }}>{successMessage}</div>}
+          {serverError && <div className="error-text center">{serverError}</div>}
+          {successMessage && <div className="success-text">{successMessage}</div>}
 
           <button
             type="submit"
             onMouseEnter={() => setHoverButton(true)}
             onMouseLeave={() => setHoverButton(false)}
-            style={commonStyles.button(hoverButton)}
+            className={hoverButton ? 'hovered' : ''}
           >
             Registrarme
           </button>
         </form>
 
-        <div style={commonStyles.footerText}>
-          ¿Ya tienes cuenta? <a href="#" style={commonStyles.link}>Inicia sesión</a>
+        <div className="footer-text">
+          ¿Ya tienes cuenta? <a href="/login">Inicia sesión</a>
         </div>
       </div>
     </div>
