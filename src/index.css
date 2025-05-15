@@ -7,6 +7,13 @@
   box-sizing: border-box;
 }
 
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+}
+
 /* ==============================
   BASE TYPOGRAPHY
      ============================== */
@@ -22,6 +29,9 @@ a {
 }
 
 .app-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   transition: filter 0.4s ease;
 }
 
@@ -55,6 +65,10 @@ a {
 
 .fade-page {
   animation: fadePage 0.5s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
 }
 
 @keyframes fadePage {
