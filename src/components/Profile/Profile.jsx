@@ -11,7 +11,9 @@ export default function Profile() {
     username: '',
     full_name: '',
     email: '',
-    address: ''
+    address: '',
+    password: '',
+    new_password: ''
   });
   const [user, setUser] = useState(null);
   const [orders, setOrders] = useState([]);
@@ -42,12 +44,13 @@ export default function Profile() {
           const userData = await respUser.json();
           if (respUser.ok) {
             setUser(userData);
-            setForm({
+            setForm(prev => ({
+              ...prev,
               username: userData.username,
               full_name: userData.full_name,
               email: userData.email,
               address: userData.address
-            });
+            }));
           } else {
             throw new Error(userData.error || 'Error loading user data.');
           }
@@ -77,8 +80,8 @@ export default function Profile() {
     setMessage('');
     setError('');
     try {
-      const resp = await fetch(`${API_URL}/api/user/${userId}/`, {
-        method: 'PATCH',
+      const resp = await fetch(`${API_URL}/users/${userId}/`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify(form)
@@ -131,7 +134,7 @@ export default function Profile() {
             Orders
           </button>
 
-          {/* Onlny ADMIN users */}
+          {/* Only ADMIN users */}
           {user?.role === 'Admin' && (
             <button
               className="sidebar-button"
@@ -178,13 +181,13 @@ export default function Profile() {
                 {error && <div className="profile-error">{error}</div>}
 
                 <div className="form-card">
-                  {['username', 'full_name', 'email', 'address'].map(field => (
+                  {['username', 'full_name', 'email', 'address', 'password', 'new_password'].map(field => (
                     <div className="form-group" key={field}>
                       <label htmlFor={field}>{field.replace('_', ' ')}</label>
                       <input
                         id={field}
                         name={field}
-                        type={field === 'email' ? 'email' : 'text'}
+                        type={field.includes('password') ? 'password' : 'text'}
                         value={form[field]}
                         onChange={handleChange}
                         disabled={loading}

@@ -4,7 +4,7 @@ import ProductCard from '../ProductCard/ProductCard';
 import { getProducts } from '../../services/productService';
 import '../../index.css';
 import './CategoryPage.css';
-
+import logo from '../../assets/logo.png'
 
 const ATTRIBUTES_BY_CATEGORY = {
     phone: ['Processor', 'Noise Cancelling', 'Storage', 'Battery Life', 'Screen Size'],
@@ -17,14 +17,15 @@ export default function CategoryPage() {
     const { name } = useParams();
     const [allProducts, setAllProducts] = useState([]);
     const [filtered, setFiltered] = useState([]);
-
+    const [loading, setLoading] = useState(true);
     const [seriesFilter, setSeriesFilter] = useState(new Set());
     const [attrFilter, setAttrFilter] = useState({});
     const [priceRange, setPriceRange] = useState([0, 0]);
     const [ratingMin, setRatingMin] = useState(0);
+    const [sortOrder, setSortOrder] = useState('none');
 
-    // initial products from this category
     useEffect(() => {
+        setLoading(true);
         getProducts()
             .then(all => {
                 const cat = all.filter(p =>
@@ -36,8 +37,10 @@ export default function CategoryPage() {
                     setPriceRange([Math.min(...prices), Math.max(...prices)]);
                 }
             })
-            .catch(console.error);
+            .catch(console.error)
+            .finally(() => setLoading(false));
     }, [name]);
+
 
     const seriesOptions = useMemo(() => {
         return Array.from(new Set(allProducts.map(p => p.series)));
@@ -60,16 +63,13 @@ export default function CategoryPage() {
         return map;
     }, [allProducts, name]);
 
-    // Apply all filters
     useEffect(() => {
         let temp = [...allProducts];
 
-        // Series
         if (seriesFilter.size) {
             temp = temp.filter(p => seriesFilter.has(p.series));
         }
 
-        // Atributtes
         for (const [attr, vals] of Object.entries(attrFilter)) {
             if (vals.size) {
                 temp = temp.filter(p =>
@@ -80,26 +80,28 @@ export default function CategoryPage() {
             }
         }
 
-        // Price
         temp = temp.filter(p =>
             p.price >= priceRange[0] &&
             p.price <= priceRange[1]
         );
 
-        // Rating
-        temp = temp.filter(p =>
-            (p.rating || 0) >= ratingMin
-        );
+        temp = temp.filter(p => (p.rating || 0) >= ratingMin);
+
+        if (sortOrder === 'asc') {
+            temp.sort((a, b) => a.price - b.price);
+        } else if (sortOrder === 'desc') {
+            temp.sort((a, b) => b.price - a.price);
+        }
 
         setFiltered(temp);
-    }, [allProducts, seriesFilter, attrFilter, priceRange, ratingMin]);
+    }, [allProducts, seriesFilter, attrFilter, priceRange, ratingMin, sortOrder]);
 
-    // Handlers
     const toggleSeries = s => {
         const next = new Set(seriesFilter);
         next.has(s) ? next.delete(s) : next.add(s);
         setSeriesFilter(next);
     };
+
     const toggleAttr = (attr, val) => {
         const next = { ...attrFilter };
         next[attr] = next[attr] || new Set();
@@ -107,13 +109,18 @@ export default function CategoryPage() {
         setAttrFilter(next);
     };
 
+    if (loading) {
+        return (
+            <div className="category-loader">
+                <img src={logo} alt="Loading..." className="logo-spinner" />
+            </div>
+        );
+    }
     return (
         <>
             <div className="category-wrapper">
-
                 <div className="category-page">
                     <aside className="filters">
-                        {/* Series */}
                         <h3>Series</h3>
                         {seriesOptions.map(s => (
                             <label key={s}>
@@ -125,8 +132,15 @@ export default function CategoryPage() {
                                 {s}
                             </label>
                         ))}
-
-                        {/* Price */}
+                        <select
+                            value={sortOrder}
+                            onChange={e => setSortOrder(e.target.value)}
+                            className='sort-select'
+                        >
+                            <option value="none">Order by Price</option>
+                            <option value="asc">Price: Low to High</option>
+                            <option value="desc">Price: High to Low</option>
+                        </select>
                         <h3>Price</h3>
                         <div className="price-range">
                             <input
@@ -142,7 +156,6 @@ export default function CategoryPage() {
                             />
                         </div>
 
-                        {/* Rating */}
                         <h3>Rating ≥ {ratingMin}</h3>
                         <input
                             type="range"
@@ -153,7 +166,6 @@ export default function CategoryPage() {
                             onChange={e => setRatingMin(+e.target.value)}
                         />
 
-                        {/* Atributtes statics by category */}
                         {Object.entries(attrOptions).map(([attr, vals]) => (
                             <div key={attr}>
                                 <h3>{attr}</h3>

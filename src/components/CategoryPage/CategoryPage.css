@@ -156,3 +156,63 @@
     transform: translateY(-5px);
     box-shadow: 0 8px 24px rgba(0, 112, 243, 0.3);
 }
+
+.sort-select {
+    margin-top: 0.5rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.5rem;
+    border: 1px solid #ccc;
+    font-size: 0.95rem;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(12px) contrast(1.1);
+    -webkit-backdrop-filter: blur(12px) contrast(1.1);
+    box-shadow: 0 4px 12px rgba(0, 112, 243, 0.05);
+    color: #1f2937;
+    appearance: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.sort-select:hover {
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 6px 16px rgba(0, 112, 243, 0.1);
+}
+
+.sort-select:focus {
+    outline: none;
+    border-color: #0070f3;
+}
+
+.category-loader {
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #eef2ff 0%, #ffffff 100%);
+    position: relative;
+    z-index: 9999;
+}
+
+.logo-spinner {
+    width: 140px;
+    height: 140px;
+    animation: pulse-logo 1.4s infinite ease-in-out;
+    filter: drop-shadow(0 0 16px rgba(0, 112, 243, 0.5));
+}
+
+@keyframes pulse-logo {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.25);
+        opacity: 0.75;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
