@@ -6,7 +6,9 @@
     position: relative;
     perspective: 1000px;
     width: 100%;
+    flex: none;
     height: 44.6vh;
+    min-height: 0;
     overflow: visible;
     user-select: none;
     cursor: grab;
@@ -129,4 +131,77 @@
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
+}
+
+@media (max-width: 640px) {
+
+    .banner {
+        padding: 1.5rem 1rem;
+    }
+
+    .banner h1 {
+        font-size: 1.5rem;
+    }
+
+    .banner p {
+        font-size: 0.875rem;
+    }
+
+    .circular-carousel-container {
+        min-height: 40vh;
+    }
+
+    .carousel-item {
+        width: 100px;
+        height: 100px;
+        margin: -50px 0 0 -50px;
+    }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+    .banner {
+        padding: 2.5rem 2rem;
+    }
+
+    .banner h1 {
+        font-size: 2rem;
+    }
+
+    .banner p {
+        font-size: 1rem;
+    }
+
+    .circular-carousel-container {
+        min-height: 50vh;
+    }
+
+    .carousel-item {
+        width: 125px;
+        height: 125px;
+        margin: -62.5px 0 0 -62.5px;
+    }
+}
+
+@media (min-width: 1025px) and (max-width: 1440px) {
+    .banner {
+        padding: 3rem 3rem;
+    }
+
+    .banner h1 {
+        font-size: 2.5rem;
+    }
+
+    .banner p {
+        font-size: 1.125rem;
+    }
+
+    .circular-carousel-container {
+        min-height: 55vh;
+    }
+
+    .carousel-item {
+        width: 140px;
+        height: 140px;
+        margin: -70px 0 0 -70px;
+    }
 }
