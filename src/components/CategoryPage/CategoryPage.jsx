@@ -23,6 +23,8 @@ export default function CategoryPage() {
     const [priceRange, setPriceRange] = useState([0, 0]);
     const [ratingMin, setRatingMin] = useState(0);
     const [sortOrder, setSortOrder] = useState('none');
+    const [sortName, setSortName] = useState('none');
+
 
     useEffect(() => {
         setLoading(true);
@@ -87,14 +89,19 @@ export default function CategoryPage() {
 
         temp = temp.filter(p => (p.rating || 0) >= ratingMin);
 
-        if (sortOrder === 'asc') {
+        if (sortName === 'az') {
+            temp.sort((a, b) => a.name.localeCompare(b.name));
+        } else if (sortName === 'za') {
+            temp.sort((a, b) => b.name.localeCompare(a.name));
+        }
+        else if (sortOrder === 'asc') {
             temp.sort((a, b) => a.price - b.price);
         } else if (sortOrder === 'desc') {
             temp.sort((a, b) => b.price - a.price);
         }
 
         setFiltered(temp);
-    }, [allProducts, seriesFilter, attrFilter, priceRange, ratingMin, sortOrder]);
+    }, [allProducts, seriesFilter, attrFilter, priceRange, ratingMin, sortOrder, sortName]);
 
     const toggleSeries = s => {
         const next = new Set(seriesFilter);
@@ -132,6 +139,16 @@ export default function CategoryPage() {
                                 {s}
                             </label>
                         ))}
+                        <select
+                            value={sortName}
+                            onChange={e => setSortName(e.target.value)}
+                            className='sort-select'
+                        >
+                            <option value="none">Order by Name</option>
+                            <option value="az">Name: A → Z</option>
+                            <option value="za">Name: Z → A</option>
+                        </select>
+
                         <select
                             value={sortOrder}
                             onChange={e => setSortOrder(e.target.value)}
