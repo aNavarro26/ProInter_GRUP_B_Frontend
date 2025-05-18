@@ -25,12 +25,21 @@ export default function SignupPage() {
 
   const validate = () => {
     const newErrors = {};
-    if (!form.username) newErrors.username = 'El nombre de usuario es obligatorio.';
-    if (!form.full_name) newErrors.full_name = 'El nombre completo es obligatorio.';
-    if (!form.email) newErrors.email = 'El correo es obligatorio.';
-    if (!form.password) newErrors.password = 'La contraseña es obligatoria.';
-    if (!form.confirm_password) newErrors.confirm_password = 'Repite tu contraseña.';
-    if (form.password && form.password !== form.confirm_password) newErrors.confirm_password = 'Las contraseñas deben coincidir.';
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!form.username) newErrors.username = 'Username is required.';
+    if (!form.full_name) newErrors.full_name = 'Full name is required.';
+    if (!form.email) {
+      newErrors.email = 'Email is required.';
+    } else if (!emailRegex.test(form.email)) {
+      newErrors.email = 'Invalid email format.';
+    }
+    if (!form.password) newErrors.password = 'Password is required.';
+    if (!form.confirm_password) newErrors.confirm_password = 'Please confirm your password.';
+    if (form.password && form.password !== form.confirm_password) {
+      newErrors.confirm_password = 'Passwords do not match.';
+    }
+
     return newErrors;
   };
 
@@ -50,15 +59,15 @@ export default function SignupPage() {
       });
       const data = await resp.json();
       if (resp.ok) {
-        setSuccessMessage(data.message || 'Registro exitoso.');
+        setSuccessMessage(data.message || 'Registration successful.');
         setForm({ username: '', full_name: '', email: '', password: '', confirm_password: '', address: '' });
         setUserIdCookie(data.user_id);
         window.location.href = '/';
       } else {
-        setServerError(data.error || 'Error en el registro.');
+        setServerError(data.error || 'Registration failed.');
       }
     } catch (err) {
-      setServerError('No se pudo conectar con el servidor.');
+      setServerError('Failed to connect to the server.');
     }
   };
 
@@ -70,16 +79,16 @@ export default function SignupPage() {
   return (
     <div className="signup-page">
       <div className="signup-form">
-        <h2>Crear cuenta</h2>
+        <h2>Create Account</h2>
         <form onSubmit={handleSubmit} noValidate>
           {['username', 'full_name', 'email', 'password', 'confirm_password', 'address'].map(field => {
             const labelMap = {
-              username: 'Usuario',
-              full_name: 'Nombre completo',
-              email: 'Correo electrónico',
-              password: 'Contraseña',
-              confirm_password: 'Repetir contraseña',
-              address: 'Dirección (opcional)'
+              username: 'Username',
+              full_name: 'Full Name',
+              email: 'Email',
+              password: 'Password',
+              confirm_password: 'Confirm Password',
+              address: 'Address (optional)'
             };
             const isPassword = field.includes('password');
             const type = isPassword ? 'password' : field === 'email' ? 'email' : 'text';
@@ -110,12 +119,12 @@ export default function SignupPage() {
             onMouseLeave={() => setHoverButton(false)}
             className={hoverButton ? 'hovered' : ''}
           >
-            Registrarme
+            Sign Up
           </button>
         </form>
 
         <div className="footer-text">
-          ¿Ya tienes cuenta? <a href="/login">Inicia sesión</a>
+          Already have an account? <a href="/login">Log in</a>
         </div>
       </div>
     </div>
